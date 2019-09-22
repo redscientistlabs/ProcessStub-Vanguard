@@ -120,7 +120,7 @@ namespace Vanguard
             var partial = new PartialSpec("VanguardSpec");
 
             partial[VSPEC.NAME] = "ProcessStub";
-            partial[VSPEC.SYSTEM] = "FileSystem";
+            partial[VSPEC.SYSTEM] = "Windows";
             partial[VSPEC.GAMENAME] = String.Empty;
             partial[VSPEC.SYSTEMPREFIX] = String.Empty;
             partial[VSPEC.OPENROMFILENAME] = String.Empty;
@@ -132,7 +132,7 @@ namespace Vanguard
             partial[VSPEC.SUPPORTS_CONFIG_MANAGEMENT] = false;
             partial[VSPEC.SUPPORTS_CONFIG_HANDOFF] = false;
             partial[VSPEC.SUPPORTS_SAVESTATES] = false;
-            partial[VSPEC.OVERRIDE_DEFAULTMAXINTENSITY] = 655350;
+            partial[VSPEC.OVERRIDE_DEFAULTMAXINTENSITY] = 10000000;
             partial[VSPEC.SUPPORTS_GAMEPROTECTION] = false;
             partial[VSPEC.SUPPORTS_REALTIME] = false;
             partial[VSPEC.SUPPORTS_KILLSWITCH] = false;

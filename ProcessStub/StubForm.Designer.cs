@@ -39,6 +39,11 @@
             this.lbTargetStatus = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.pnGlitchHarvesterOpen = new System.Windows.Forms.Panel();
+            this.tbFilterText = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.btnRefreshDomains = new System.Windows.Forms.Button();
+            this.label3 = new System.Windows.Forms.Label();
+            this.tbAutoAttach = new System.Windows.Forms.TextBox();
             this.pnTarget.SuspendLayout();
             this.pnSideBar.SuspendLayout();
             this.SuspendLayout();
@@ -59,6 +64,7 @@
             this.pnTarget.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pnTarget.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.pnTarget.Controls.Add(this.btnRefreshDomains);
             this.pnTarget.Controls.Add(this.btnUnloadTarget);
             this.pnTarget.Controls.Add(this.btnBrowseTarget);
             this.pnTarget.Controls.Add(this.lbTarget);
@@ -94,7 +100,7 @@
             this.btnBrowseTarget.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnBrowseTarget.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.btnBrowseTarget.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            this.btnBrowseTarget.Location = new System.Drawing.Point(12, 39);
+            this.btnBrowseTarget.Location = new System.Drawing.Point(12, 12);
             this.btnBrowseTarget.Name = "btnBrowseTarget";
             this.btnBrowseTarget.Size = new System.Drawing.Size(72, 23);
             this.btnBrowseTarget.TabIndex = 35;
@@ -111,12 +117,12 @@
             this.lbTarget.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(31)))), ((int)(((byte)(32)))));
             this.lbTarget.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.lbTarget.ForeColor = System.Drawing.Color.PaleGoldenrod;
-            this.lbTarget.Location = new System.Drawing.Point(87, 39);
+            this.lbTarget.Location = new System.Drawing.Point(12, 39);
             this.lbTarget.Name = "lbTarget";
             this.lbTarget.Padding = new System.Windows.Forms.Padding(3, 6, 1, 1);
-            this.lbTarget.Size = new System.Drawing.Size(260, 72);
+            this.lbTarget.Size = new System.Drawing.Size(335, 72);
             this.lbTarget.TabIndex = 36;
-            this.lbTarget.Tag = "color:dark2";
+            this.lbTarget.Tag = "color:dark3";
             this.lbTarget.Text = "No target selected";
             this.lbTarget.Visible = false;
             // 
@@ -142,13 +148,15 @@
             // pnSideBar
             // 
             this.pnSideBar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(20)))), ((int)(((byte)(20)))));
+            this.pnSideBar.Controls.Add(this.label3);
             this.pnSideBar.Controls.Add(this.lbTargetStatus);
+            this.pnSideBar.Controls.Add(this.tbAutoAttach);
             this.pnSideBar.Controls.Add(this.label2);
             this.pnSideBar.Controls.Add(this.pnGlitchHarvesterOpen);
             this.pnSideBar.Dock = System.Windows.Forms.DockStyle.Left;
             this.pnSideBar.Location = new System.Drawing.Point(0, 0);
             this.pnSideBar.Name = "pnSideBar";
-            this.pnSideBar.Size = new System.Drawing.Size(118, 211);
+            this.pnSideBar.Size = new System.Drawing.Size(118, 255);
             this.pnSideBar.TabIndex = 174;
             this.pnSideBar.Tag = "color:dark3";
             // 
@@ -183,12 +191,82 @@
             this.pnGlitchHarvesterOpen.Tag = "color:light1";
             this.pnGlitchHarvesterOpen.Visible = false;
             // 
+            // tbFilterText
+            // 
+            this.tbFilterText.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(31)))), ((int)(((byte)(32)))));
+            this.tbFilterText.Font = new System.Drawing.Font("Segoe UI", 8F);
+            this.tbFilterText.ForeColor = System.Drawing.Color.White;
+            this.tbFilterText.Location = new System.Drawing.Point(219, 185);
+            this.tbFilterText.Multiline = true;
+            this.tbFilterText.Name = "tbFilterText";
+            this.tbFilterText.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.tbFilterText.Size = new System.Drawing.Size(257, 58);
+            this.tbFilterText.TabIndex = 175;
+            this.tbFilterText.Tag = "color:dark2";
+            this.tbFilterText.Text = ".exe\r\n.dll";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Segoe UI", 8F);
+            this.label1.ForeColor = System.Drawing.Color.White;
+            this.label1.Location = new System.Drawing.Point(138, 188);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(75, 26);
+            this.label1.TabIndex = 176;
+            this.label1.Text = "Filter text:\r\n(one per line)";
+            // 
+            // btnRefreshDomains
+            // 
+            this.btnRefreshDomains.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnRefreshDomains.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
+            this.btnRefreshDomains.FlatAppearance.BorderSize = 0;
+            this.btnRefreshDomains.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnRefreshDomains.Font = new System.Drawing.Font("Segoe UI", 8F);
+            this.btnRefreshDomains.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.btnRefreshDomains.Location = new System.Drawing.Point(151, 12);
+            this.btnRefreshDomains.Name = "btnRefreshDomains";
+            this.btnRefreshDomains.Size = new System.Drawing.Size(106, 23);
+            this.btnRefreshDomains.TabIndex = 43;
+            this.btnRefreshDomains.TabStop = false;
+            this.btnRefreshDomains.Tag = "color:dark2";
+            this.btnRefreshDomains.Text = "Refresh Domains";
+            this.btnRefreshDomains.UseVisualStyleBackColor = false;
+            this.btnRefreshDomains.Visible = false;
+            this.btnRefreshDomains.Click += new System.EventHandler(this.BtnRefreshDomains_Click);
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Font = new System.Drawing.Font("Segoe UI", 8F);
+            this.label3.ForeColor = System.Drawing.Color.White;
+            this.label3.Location = new System.Drawing.Point(5, 206);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(68, 13);
+            this.label3.TabIndex = 178;
+            this.label3.Text = "Auto-attach";
+            // 
+            // tbAutoAttach
+            // 
+            this.tbAutoAttach.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(31)))), ((int)(((byte)(32)))));
+            this.tbAutoAttach.Enabled = false;
+            this.tbAutoAttach.Font = new System.Drawing.Font("Segoe UI", 8F);
+            this.tbAutoAttach.ForeColor = System.Drawing.Color.White;
+            this.tbAutoAttach.Location = new System.Drawing.Point(8, 222);
+            this.tbAutoAttach.Multiline = true;
+            this.tbAutoAttach.Name = "tbAutoAttach";
+            this.tbAutoAttach.Size = new System.Drawing.Size(103, 21);
+            this.tbAutoAttach.TabIndex = 177;
+            this.tbAutoAttach.Tag = "color:dark2";
+            // 
             // StubForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
-            this.ClientSize = new System.Drawing.Size(500, 211);
+            this.ClientSize = new System.Drawing.Size(500, 255);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.tbFilterText);
             this.Controls.Add(this.pnSideBar);
             this.Controls.Add(this.btnTargetSettings);
             this.Controls.Add(this.pnTarget);
@@ -220,6 +298,11 @@
         private System.Windows.Forms.Button btnUnloadTarget;
         public System.Windows.Forms.Label lbTargetStatus;
         private System.Windows.Forms.Label label2;
+        public System.Windows.Forms.TextBox tbFilterText;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Button btnRefreshDomains;
+        private System.Windows.Forms.Label label3;
+        public System.Windows.Forms.TextBox tbAutoAttach;
     }
 }
 

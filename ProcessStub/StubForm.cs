@@ -24,7 +24,6 @@ namespace ProcessStub
 
             SyncObjectSingleton.SyncObject = this;
 
-
             Text += " " + ProcessWatch.ProcessStubVersion;
 
         }
@@ -32,6 +31,10 @@ namespace ProcessStub
         private void StubForm_Load(object sender, EventArgs e)
         {
             UICore.SetRTCColor(Color.Crimson, this);
+
+            tbFilterText.DeselectAll();
+            tbAutoAttach.DeselectAll();
+            this.Focus();
 
             ProcessWatch.Start();
         }
@@ -48,7 +51,6 @@ namespace ProcessStub
 
             ProcessWatch.progressForm = new ProgressForm(progressLabel, maxProgress, action, postAction);
             ProcessWatch.progressForm.Run();
-
         }
 
 
@@ -108,6 +110,13 @@ namespace ProcessStub
             DisableTargetInterface();
         }
 
+
+        private void StubForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (!ProcessWatch.CloseTarget(false))
+                e.Cancel = true;
+        }
+
         private void BtnTargetSettings_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
@@ -117,14 +126,32 @@ namespace ProcessStub
 
                 ContextMenuStrip columnsMenu = new ContextMenuStrip();
 
+
+                ((ToolStripMenuItem)columnsMenu.Items.Add("Use Filtering", null, new EventHandler((ob, ev) =>
+                {
+
+                    ProcessWatch.UseFiltering = !ProcessWatch.UseFiltering;
+
+                    if (VanguardCore.vanguardConnected)
+                        ProcessWatch.UpdateDomains();
+
+                }))).Checked = ProcessWatch.UseFiltering;
+                ((ToolStripMenuItem)columnsMenu.Items.Add("Use AutoHook", null, new EventHandler((ob, ev) =>
+                {
+
+                    ProcessWatch.AutoHookTimer.Enabled = !ProcessWatch.AutoHookTimer.Enabled;
+                    tbAutoAttach.Enabled = ProcessWatch.AutoHookTimer.Enabled;
+
+                }))).Checked = ProcessWatch.AutoHookTimer.Enabled;
+
+
                 columnsMenu.Show(this, locate);
             }
         }
 
-        private void StubForm_FormClosing(object sender, FormClosingEventArgs e)
+        private void BtnRefreshDomains_Click(object sender, EventArgs e)
         {
-            if (!ProcessWatch.CloseTarget(false))
-                e.Cancel = true;
+            ProcessWatch.UpdateDomains();
         }
     }
 }

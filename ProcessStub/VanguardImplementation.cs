@@ -100,6 +100,10 @@ namespace Vanguard
                         });
                         break;
 
+                    case REMOTE_DOMAIN_REFRESHDOMAINS:
+                        SyncObjectSingleton.FormExecute(() => { ProcessWatch.UpdateDomains(); });
+                        break;
+
                     case REMOTE_EVENT_EMU_MAINFORM_CLOSE:
                         SyncObjectSingleton.FormExecute(() =>
                         {

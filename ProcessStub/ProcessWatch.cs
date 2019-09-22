@@ -20,11 +20,18 @@ namespace ProcessStub
         public static string ProcessStubVersion = "0.0.1";
         public static string currentDir = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
         public static Process p;
+        public static bool UseFiltering = true;
 
         public static ProgressForm progressForm;
+        public static System.Timers.Timer AutoHookTimer;
 
         public static void Start()
         {
+            AutoHookTimer = new System.Timers.Timer();
+            AutoHookTimer.Interval = 5000;
+            AutoHookTimer.Elapsed += AutoHookTimer_Elapsed;
+            
+
             if (VanguardCore.vanguardConnected)
                 UpdateDomains();
 
@@ -47,52 +54,77 @@ namespace ProcessStub
                 MessageBox.Show(File.ReadAllText(disclaimerPath).Replace("[ver]", ProcessWatch.ProcessStubVersion), "Process Stub", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 File.Create(disclaimerReadPath);
             }
+        }
 
-            //If we can't load the dictionary, quit the wgh to prevent the loss of backups
-            if (!FileInterface.LoadCompositeFilenameDico(ProcessWatch.currentDir))
-                Application.Exit();
+        private static void AutoHookTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            try
+            {
+                if (p?.HasExited == false)
+                    return;
+                var procToFind = S.GET<StubForm>().tbAutoAttach.Text;
+                if (String.IsNullOrWhiteSpace(procToFind))
+                    return;
 
+                var _p = Process.GetProcesses().First(x => x.ProcessName == procToFind);
+                if (_p != null)
+                {
+                    SyncObjectSingleton.FormExecute(() =>
+                    {
+                        LoadTarget(_p);
+                        S.GET<StubForm>().EnableTargetInterface();
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"AutoHook failed.\n{ex.Message}\n{ex.StackTrace}");
+            }
         }
 
 
-        internal static bool LoadTarget()
+        internal static bool LoadTarget(Process _p = null)
         {
-            using (var f = new HookProcessForm())
+            if (_p == null)
             {
-                if (f.ShowDialog() != DialogResult.OK)
-                    return false;
-
-                if (f.RequestedProcess == null || (f.RequestedProcess?.HasExited ?? true))
+                using (var f = new HookProcessForm())
                 {
-                    return false;
-                }
+                    if (f.ShowDialog() != DialogResult.OK)
+                        return false;
 
-                Action<object, EventArgs> action = (ob, ea) =>
-                {
-                    p = f.RequestedProcess;
-
-
-                    if (VanguardCore.vanguardConnected)
-                        UpdateDomains();
-                };
-
-                Action<object, EventArgs> postAction = (ob, ea) =>
-                {
-                    if (p == null)
+                    if (f.RequestedProcess == null || (f.RequestedProcess?.HasExited ?? true))
                     {
-                        MessageBox.Show("Failed to load target");
-                        S.GET<StubForm>().DisableTargetInterface();
-                        return;
+                        return false;
                     }
-                    S.GET<StubForm>().lbTarget.Text = p.ProcessName;
-                    
 
-                    //Refresh the UI
-                    //RefreshUIPostLoad();
-                };
-                S.GET<StubForm>().RunProgressBar($"Loading target...", 0, action, postAction);
-
+                    p = f.RequestedProcess;
+                }
             }
+            else
+                p = _p;
+
+            Action<object, EventArgs> action = (ob, ea) =>
+            {
+                if (VanguardCore.vanguardConnected)
+                    UpdateDomains();
+            };
+
+            Action<object, EventArgs> postAction = (ob, ea) =>
+            {
+                if (p == null)
+                {
+                    MessageBox.Show("Failed to load target");
+                    S.GET<StubForm>().DisableTargetInterface();
+                    return;
+                }
+                S.GET<StubForm>().lbTarget.Text = p.ProcessName;
+                
+
+                //Refresh the UI
+                //RefreshUIPostLoad();
+            };
+            S.GET<StubForm>().RunProgressBar($"Loading target...", 0, action, postAction);
+
             return true;
         }
 
@@ -169,7 +201,9 @@ namespace ProcessStub
 
                     var state = Jupiter.MemoryProtection.ReadWrite;
                     var name = ProcessExtensions.GetModuleFileNameExW(p.Handle, mbi.BaseAddress);
-                    if (mbi.State == (uint) ProcessExtensions.MemoryType.MEM_COMMIT && ((mbi.Protect & state) != 0) && (name.Contains(".exe") || name.Contains(".dll"))) 
+
+                    var filters = S.GET<StubForm>().tbFilterText.Text.Split('\n').Select(x => x.Trim()).ToArray();
+                    if (mbi.State == (uint) ProcessExtensions.MemoryType.MEM_COMMIT && ((mbi.Protect & state) != 0) && filters.Any(x => name.ToUpper().Contains(x.ToUpper()))) 
                     {
                         ProcessMemoryDomain p = new ProcessMemoryDomain(_p, mbi.BaseAddress, (long)mbi.RegionSize);
                         interfaces.Add(new MemoryDomainProxy(p));
