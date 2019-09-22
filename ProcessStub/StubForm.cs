@@ -30,7 +30,7 @@ namespace ProcessStub
 
         private void StubForm_Load(object sender, EventArgs e)
         {
-            UICore.SetRTCColor(Color.Crimson, this);
+            UICore.SetRTCColor(Color.FromArgb(149, 120, 161), this);
 
             tbFilterText.DeselectAll();
             tbAutoAttach.DeselectAll();
@@ -69,8 +69,7 @@ namespace ProcessStub
             originalLbTargetSize = lbTarget.Size;
             lbTarget.Size = new Size(lbTarget.Size.Width + diff, lbTarget.Size.Height);
             btnUnloadTarget.Visible = true;
-
-
+            btnRefreshDomains.Visible = true;
 
             ProcessWatch.EnableInterface();
         }
@@ -78,7 +77,9 @@ namespace ProcessStub
         public void DisableTargetInterface()
         {
             btnUnloadTarget.Visible = false;
+            btnRefreshDomains.Visible = false;
             btnBrowseTarget.Visible = true;
+            
             lbTarget.Size = originalLbTargetSize;
             lbTarget.Location = originalLbTargetLocation;
             lbTarget.Visible = false;
@@ -151,7 +152,8 @@ namespace ProcessStub
 
         private void BtnRefreshDomains_Click(object sender, EventArgs e)
         {
-            ProcessWatch.UpdateDomains();
+            if (VanguardCore.vanguardConnected)
+                ProcessWatch.UpdateDomains();
         }
     }
 }

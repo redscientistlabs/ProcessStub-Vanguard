@@ -35,8 +35,7 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>
-    </ApplicationIcon>
+    <ApplicationIcon>ProcessStubIcon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Ceras, Version=4.1.7.0, Culture=neutral, processorArchitecture=MSIL">
@@ -92,6 +91,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="VanguardCore.cs" />
     <Compile Include="VanguardImplementation.cs" />
+    <EmbeddedResource Include="HookProcessForm.resx">
+      <DependentUpon>HookProcessForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="StubForm.resx">
       <DependentUpon>StubForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -139,6 +141,9 @@
       <Project>{364c705e-b7ab-4a94-a59b-88899ce65958}</Project>
       <Name>Vanguard</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="ProcessStubIcon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

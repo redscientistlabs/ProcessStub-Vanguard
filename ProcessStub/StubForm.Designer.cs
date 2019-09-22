@@ -44,6 +44,7 @@
             this.btnRefreshDomains = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.tbAutoAttach = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
             this.pnTarget.SuspendLayout();
             this.pnSideBar.SuspendLayout();
             this.SuspendLayout();
@@ -64,7 +65,6 @@
             this.pnTarget.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pnTarget.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.pnTarget.Controls.Add(this.btnRefreshDomains);
             this.pnTarget.Controls.Add(this.btnUnloadTarget);
             this.pnTarget.Controls.Add(this.btnBrowseTarget);
             this.pnTarget.Controls.Add(this.lbTarget);
@@ -148,15 +148,14 @@
             // pnSideBar
             // 
             this.pnSideBar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(20)))), ((int)(((byte)(20)))));
-            this.pnSideBar.Controls.Add(this.label3);
+            this.pnSideBar.Controls.Add(this.label4);
             this.pnSideBar.Controls.Add(this.lbTargetStatus);
-            this.pnSideBar.Controls.Add(this.tbAutoAttach);
             this.pnSideBar.Controls.Add(this.label2);
             this.pnSideBar.Controls.Add(this.pnGlitchHarvesterOpen);
             this.pnSideBar.Dock = System.Windows.Forms.DockStyle.Left;
             this.pnSideBar.Location = new System.Drawing.Point(0, 0);
             this.pnSideBar.Name = "pnSideBar";
-            this.pnSideBar.Size = new System.Drawing.Size(118, 255);
+            this.pnSideBar.Size = new System.Drawing.Size(118, 261);
             this.pnSideBar.TabIndex = 174;
             this.pnSideBar.Tag = "color:dark3";
             // 
@@ -164,7 +163,7 @@
             // 
             this.lbTargetStatus.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.lbTargetStatus.ForeColor = System.Drawing.Color.White;
-            this.lbTargetStatus.Location = new System.Drawing.Point(9, 37);
+            this.lbTargetStatus.Location = new System.Drawing.Point(7, 37);
             this.lbTargetStatus.Name = "lbTargetStatus";
             this.lbTargetStatus.Size = new System.Drawing.Size(110, 44);
             this.lbTargetStatus.TabIndex = 123;
@@ -193,24 +192,28 @@
             // 
             // tbFilterText
             // 
+            this.tbFilterText.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tbFilterText.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(31)))), ((int)(((byte)(32)))));
             this.tbFilterText.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.tbFilterText.ForeColor = System.Drawing.Color.White;
-            this.tbFilterText.Location = new System.Drawing.Point(219, 185);
+            this.tbFilterText.Location = new System.Drawing.Point(219, 191);
             this.tbFilterText.Multiline = true;
             this.tbFilterText.Name = "tbFilterText";
             this.tbFilterText.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.tbFilterText.Size = new System.Drawing.Size(257, 58);
+            this.tbFilterText.Size = new System.Drawing.Size(257, 34);
             this.tbFilterText.TabIndex = 175;
             this.tbFilterText.Tag = "color:dark2";
             this.tbFilterText.Text = ".exe\r\n.dll";
             // 
             // label1
             // 
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.label1.ForeColor = System.Drawing.Color.White;
-            this.label1.Location = new System.Drawing.Point(138, 188);
+            this.label1.Location = new System.Drawing.Point(138, 194);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(75, 26);
             this.label1.TabIndex = 176;
@@ -218,15 +221,15 @@
             // 
             // btnRefreshDomains
             // 
-            this.btnRefreshDomains.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnRefreshDomains.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnRefreshDomains.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
             this.btnRefreshDomains.FlatAppearance.BorderSize = 0;
             this.btnRefreshDomains.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnRefreshDomains.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.btnRefreshDomains.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            this.btnRefreshDomains.Location = new System.Drawing.Point(151, 12);
+            this.btnRefreshDomains.Location = new System.Drawing.Point(373, 229);
             this.btnRefreshDomains.Name = "btnRefreshDomains";
-            this.btnRefreshDomains.Size = new System.Drawing.Size(106, 23);
+            this.btnRefreshDomains.Size = new System.Drawing.Size(103, 23);
             this.btnRefreshDomains.TabIndex = 43;
             this.btnRefreshDomains.TabStop = false;
             this.btnRefreshDomains.Tag = "color:dark2";
@@ -237,10 +240,12 @@
             // 
             // label3
             // 
+            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.label3.ForeColor = System.Drawing.Color.White;
-            this.label3.Location = new System.Drawing.Point(5, 206);
+            this.label3.Location = new System.Drawing.Point(138, 236);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(68, 13);
             this.label3.TabIndex = 178;
@@ -248,32 +253,51 @@
             // 
             // tbAutoAttach
             // 
+            this.tbAutoAttach.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tbAutoAttach.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(31)))), ((int)(((byte)(32)))));
             this.tbAutoAttach.Enabled = false;
             this.tbAutoAttach.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.tbAutoAttach.ForeColor = System.Drawing.Color.White;
-            this.tbAutoAttach.Location = new System.Drawing.Point(8, 222);
+            this.tbAutoAttach.Location = new System.Drawing.Point(219, 231);
             this.tbAutoAttach.Multiline = true;
             this.tbAutoAttach.Name = "tbAutoAttach";
-            this.tbAutoAttach.Size = new System.Drawing.Size(103, 21);
+            this.tbAutoAttach.Size = new System.Drawing.Size(148, 21);
             this.tbAutoAttach.TabIndex = 177;
             this.tbAutoAttach.Tag = "color:dark2";
+            // 
+            // label4
+            // 
+            this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label4.BackColor = System.Drawing.Color.Transparent;
+            this.label4.Font = new System.Drawing.Font("Segoe UI", 8F);
+            this.label4.ForeColor = System.Drawing.Color.White;
+            this.label4.Location = new System.Drawing.Point(9, 138);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(102, 114);
+            this.label4.TabIndex = 124;
+            this.label4.Tag = "color:dark3";
+            this.label4.Text = "Don\'t be stupid. Don\'t corrupt Windows, don\'t corrupt online games.\r\n\r\nRun this i" +
+    "n a VM for maximum safety.";
             // 
             // StubForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
-            this.ClientSize = new System.Drawing.Size(500, 255);
+            this.ClientSize = new System.Drawing.Size(500, 261);
+            this.Controls.Add(this.btnRefreshDomains);
+            this.Controls.Add(this.label3);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.tbFilterText);
+            this.Controls.Add(this.tbAutoAttach);
             this.Controls.Add(this.pnSideBar);
             this.Controls.Add(this.btnTargetSettings);
             this.Controls.Add(this.pnTarget);
             this.Controls.Add(this.label5);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
-            this.MinimumSize = new System.Drawing.Size(516, 250);
+            this.MinimumSize = new System.Drawing.Size(516, 300);
             this.Name = "StubForm";
             this.Tag = "color:dark2";
             this.Text = "Process Stub";
@@ -303,6 +327,7 @@
         private System.Windows.Forms.Button btnRefreshDomains;
         private System.Windows.Forms.Label label3;
         public System.Windows.Forms.TextBox tbAutoAttach;
+        private System.Windows.Forms.Label label4;
     }
 }
 

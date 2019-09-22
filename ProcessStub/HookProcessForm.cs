@@ -10,6 +10,7 @@ using System.IO;
 using System.Diagnostics;
 using System.Linq;
 using RTCV.CorruptCore;
+using RTCV.UI;
 
 namespace ProcessStub
 {
@@ -23,6 +24,9 @@ namespace ProcessStub
 
 		private void HookProcessForm_Load(object sender, EventArgs e)
         {
+
+            UICore.SetRTCColor(Color.FromArgb(149, 120, 161), this);
+
             lbProcesses.DisplayMember = "Name";
             lbProcesses.ValueMember = "Value";
             var p = Process.GetProcesses().OrderBy(it => $"{it.ProcessName}:{it.Id}").ToArray();
