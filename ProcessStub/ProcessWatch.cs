@@ -53,12 +53,25 @@ namespace ProcessStub
             if (!Directory.Exists(paramsPath))
                 Directory.CreateDirectory(paramsPath);
 
-            string disclaimerPath = Path.Combine(currentDir, "LICENSES", "DISCLAIMER.TXT");
             string disclaimerReadPath = Path.Combine(currentDir, "PARAMS", "DISCLAIMERREAD");
 
-            if (File.Exists(disclaimerPath) && !File.Exists(disclaimerReadPath))
+            if (!File.Exists(disclaimerReadPath))
             {
-                if(MessageBox.Show(File.ReadAllText(disclaimerPath).Replace("[ver]", ProcessWatch.ProcessStubVersion), "Process Stub", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
+                var disclaimer = $@"Welcome to ProcessStub
+Version {ProcessWatch.ProcessStubVersion}
+
+Disclaimer:
+This program comes with absolutely ZERO warranty.
+You may use it at your own risk.
+Be EXTREMELY careful with what you choose to corrupt.
+Be aware there is always the chance of damage.
+
+This program inserts random data in hooked processes. There is no way to accurately predict what can happen out of this.
+The developers of this software will not be held responsible for any damage caused
+as the result of use of this software.
+
+By clicking 'Yes' you agree that you have read this warning in full and are aware of any potential consequences of use of the program. If you do not agree, click 'No' to exit this software.";
+                if (MessageBox.Show(disclaimer, "Process Stub", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
                     Environment.Exit(0);
                 File.Create(disclaimerReadPath);
             }

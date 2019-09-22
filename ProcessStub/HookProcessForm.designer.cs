@@ -50,7 +50,7 @@
             this.lbProcesses.Location = new System.Drawing.Point(0, 0);
             this.lbProcesses.Name = "lbProcesses";
             this.lbProcesses.ScrollAlwaysVisible = true;
-            this.lbProcesses.Size = new System.Drawing.Size(320, 364);
+            this.lbProcesses.Size = new System.Drawing.Size(320, 377);
             this.lbProcesses.TabIndex = 0;
             this.lbProcesses.Tag = "color:dark3";
             // 
@@ -94,13 +94,12 @@
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.label1.ForeColor = System.Drawing.Color.White;
-            this.label1.Location = new System.Drawing.Point(10, 375);
+            this.label1.Location = new System.Drawing.Point(10, 394);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(293, 39);
+            this.label1.Size = new System.Drawing.Size(269, 26);
             this.label1.TabIndex = 3;
-            this.label1.Text = "WARNING: Corrupting a game process with online \r\nfeatures can result in a ban. Bl" +
-    "ock network access via \r\nthe Windows Firewall in the Control Panel (If necessary" +
-    ")";
+            this.label1.Text = "WARNING: Corrupting a game process with online \r\nfeatures can result in a ban.  D" +
+    "on\'t be dumb.";
             // 
             // label2
             // 

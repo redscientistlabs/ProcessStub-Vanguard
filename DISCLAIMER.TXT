@@ -1,0 +1,14 @@
+Welcome to ProcessStub
+Version [ver]
+
+Disclaimer:
+This program comes with absolutely ZERO warranty.
+You may use it at your own risk.
+Be EXTREMELY careful with what you choose to corrupt.
+Be aware there is always the chance of damage.
+
+This program inserts random data in hooked processes. There is no way to accurately predict what can happen out of this.
+The developers of this software will not be held responsible for any damage caused
+as the result of use of this software.
+
+By clicking "Yes" you agree that you have read this warning in full and are aware of any potential consequences of use of the program. If you do not agree, click "No" to exit this software.
