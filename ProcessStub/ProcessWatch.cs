@@ -17,7 +17,7 @@ namespace ProcessStub
 {
     public static class ProcessWatch
     {
-        public static string ProcessStubVersion = "0.0.1";
+        public static string ProcessStubVersion = "0.0.2";
         public static string currentDir = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
         public static Process p;
         public static bool UseFiltering = true;
@@ -150,7 +150,11 @@ namespace ProcessStub
                     {
                         return false;
                     }
-
+                    if (IsProcessBlacklisted(f.RequestedProcess))
+                    {
+                        MessageBox.Show("Blacklisted process");
+                        return false;
+                    }
                     p = f.RequestedProcess;
                 }
             }
@@ -243,28 +247,32 @@ namespace ProcessStub
                 List<MemoryDomainProxy> interfaces = new List<MemoryDomainProxy>();
 
                 IntPtr addr = new IntPtr(0L);
+                var _p = ProcessExtensions.GetProcessSafe(p);
+                if (IsProcessBlacklisted(_p))
+                    return new MemoryDomainProxy[] { };
                 while (true)
                 {
-                    var _p = ProcessExtensions.GetProcessSafe(p);
+                    _p = ProcessExtensions.GetProcessSafe(p);
                     if (_p == null)
                         return new MemoryDomainProxy[] { };
+
 
                     if (ProcessExtensions.VirtualQueryEx(_p, addr, out var mbi) == false)
                     {
                         break;
                     }
 
-                    var state = Jupiter.MemoryProtection.ReadWrite;
-                    var name = ProcessExtensions.GetModuleFileNameExW(_p.Handle, mbi.BaseAddress);
-
-                    var filters = S.GET<StubForm>().tbFilterText.Text.Split('\n').Select(x => x.Trim()).ToArray();
-                    if (mbi.State == (uint) ProcessExtensions.MemoryType.MEM_COMMIT && ((mbi.Protect & state) != 0) && filters.Any(x => name.ToUpper().Contains(x.ToUpper()))) 
+                    var name = ProcessExtensions.GetMappedFileNameW(_p.Handle, mbi.BaseAddress);
+                    if (String.IsNullOrWhiteSpace(name) || !IsPathBlacklisted(name))
                     {
-                        ProcessMemoryDomain pmd = new ProcessMemoryDomain(_p, mbi.BaseAddress, (long)mbi.RegionSize);
-                        interfaces.Add(new MemoryDomainProxy(pmd));
+                        var state = Jupiter.MemoryProtection.ReadWrite;
+                        var filters = S.GET<StubForm>().tbFilterText.Text.Split('\n').Select(x => x.Trim()).ToArray();
+                        if (mbi.State == (uint)ProcessExtensions.MemoryType.MEM_COMMIT && ((mbi.Protect & state) != 0) && (!UseFiltering || filters.Any(x => name.ToUpper().Contains(x.ToUpper()))))
+                        {
+                            ProcessMemoryDomain pmd = new ProcessMemoryDomain(_p, mbi.BaseAddress, (long)mbi.RegionSize);
+                            interfaces.Add(new MemoryDomainProxy(pmd));
+                        }
                     }
-
-                    Console.WriteLine(ProcessExtensions.GetModuleFileNameExW(_p.Handle, mbi.BaseAddress));
 
                     addr = new IntPtr((long)mbi.BaseAddress + (long)mbi.RegionSize);
                 }
@@ -290,7 +298,53 @@ namespace ProcessStub
         {
         }
 
-    }
+        public static bool IsProcessBlacklisted(Process _p)
+        {
+            return IsModuleBlacklisted(_p.MainModule);
+        }
 
+        public static bool IsModuleBlacklisted(ProcessModule pm)
+        {
+            try
+            {
+
+                if (IsPathBlacklisted(pm?.FileName))
+                    return true;
+
+                if (pm?.FileVersionInfo?.ProductName != null)
+                    if (IsProductNameBlacklisted(pm.FileVersionInfo?.ProductName))
+                        return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"IsModuleBlacklisted failed!\n{e.Message}\n{e.StackTrace}");
+                return false;
+            }
+
+            return false;
+        }
+
+        public static bool IsPathBlacklisted(string path)
+        {
+            var badNames = new string[]
+            {
+                "\\Windows",
+                "System32",
+            };
+            if (badNames.Any(x => path.Contains(x)))
+                return true;
+            return false;
+        }
+        public static bool IsProductNameBlacklisted(string productName)
+        {
+            var badNames = new string[]
+            {
+                "Microsoft® Windows® Operating System",
+            };
+            if (badNames.Any(x => productName.Equals(x)))
+                return true;
+            return false;
+        }
+    }
 
 }

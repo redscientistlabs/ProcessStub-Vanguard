@@ -34,6 +34,8 @@ namespace ProcessStub
             {
                 try
                 {
+                    if (ProcessWatch.IsProcessBlacklisted(process))
+                        continue;
                     lbProcesses.Items.Add(new ComboBoxItem<Process>($"{process.ProcessName}:{process.Id}", process));
                 }
                 catch (System.ComponentModel.Win32Exception ex)
@@ -66,11 +68,19 @@ namespace ProcessStub
             try
             {
                 if (RequestedProcess?.HasExited ?? true)
+                {
                     MessageBox.Show($"Couldn't access process {name}. The process has already exited");
+                    RequestedProcess = null;
+                    this.DialogResult = DialogResult.Abort;
+                    this.Close();
+                }
             }
             catch (System.ComponentModel.Win32Exception ex)
             {
                 MessageBox.Show($"Couldn't access process {name}. Error {ex.Message}");
+                RequestedProcess = null;
+                this.DialogResult = DialogResult.Abort;
+                this.Close();
             }
             
             this.DialogResult = DialogResult.OK;
