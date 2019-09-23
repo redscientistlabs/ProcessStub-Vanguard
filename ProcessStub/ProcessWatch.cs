@@ -27,6 +27,8 @@ namespace ProcessStub
         public static System.Timers.Timer AutoHookTimer;
         public static System.Timers.Timer AutoCorruptTimer;
 
+        public static Jupiter.MemoryProtection ProtectMode = Jupiter.MemoryProtection.ReadWrite;
+
         public static void Start()
         {
             AutoHookTimer = new System.Timers.Timer();
@@ -74,6 +76,8 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
                 if (MessageBox.Show(disclaimer, "Process Stub", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
                     Environment.Exit(0);
                 File.Create(disclaimerReadPath);
+
+                if(Params.ReadParam("PROCESSMEMORYPROTECTION"))
             }
         }
 
@@ -211,6 +215,8 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
 
         public static void UpdateDomains()
         {
+            if (!VanguardCore.vanguardConnected)
+                return;
             try
             {
                 PartialSpec gameDone = new PartialSpec("VanguardSpec");
@@ -278,12 +284,19 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
                     var name = ProcessExtensions.GetMappedFileNameW(_p.Handle, mbi.BaseAddress);
                     if (String.IsNullOrWhiteSpace(name) || !IsPathBlacklisted(name))
                     {
-                        var state = Jupiter.MemoryProtection.ReadWrite;
                         var filters = S.GET<StubForm>().tbFilterText.Text.Split('\n').Select(x => x.Trim()).ToArray();
-                        if (mbi.State == (uint)ProcessExtensions.MemoryType.MEM_COMMIT && ((mbi.Protect & state) != 0) && (!UseFiltering || filters.Any(x => name.ToUpper().Contains(x.ToUpper()))))
+                        if (mbi.State == (uint)ProcessExtensions.MemoryType.MEM_COMMIT)
                         {
-                            ProcessMemoryDomain pmd = new ProcessMemoryDomain(_p, mbi.BaseAddress, (long)mbi.RegionSize);
-                            interfaces.Add(new MemoryDomainProxy(pmd));
+                            if (((mbi.Protect & ProtectMode) != 0))
+                            {
+                                if (!UseFiltering || filters.Any(x => name.ToUpper().Contains(x.ToUpper())))
+                                {
+                                    if (!String.IsNullOrWhiteSpace(name))
+                                        Console.WriteLine($"Adding mbi {name.Split('\\').Last()}  {mbi.Protect} {ProtectMode}");
+                                    ProcessMemoryDomain pmd = new ProcessMemoryDomain(_p, mbi.BaseAddress, (long)mbi.RegionSize);
+                                    interfaces.Add(new MemoryDomainProxy(pmd));
+                                }
+                            }
                         }
                     }
 

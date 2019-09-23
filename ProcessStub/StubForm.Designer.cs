@@ -36,6 +36,7 @@
             this.lbTarget = new System.Windows.Forms.Label();
             this.btnTargetSettings = new System.Windows.Forms.Button();
             this.pnSideBar = new System.Windows.Forms.Panel();
+            this.label4 = new System.Windows.Forms.Label();
             this.lbTargetStatus = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.pnGlitchHarvesterOpen = new System.Windows.Forms.Panel();
@@ -44,7 +45,6 @@
             this.btnRefreshDomains = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.tbAutoAttach = new System.Windows.Forms.TextBox();
-            this.label4 = new System.Windows.Forms.Label();
             this.pnTarget.SuspendLayout();
             this.pnSideBar.SuspendLayout();
             this.SuspendLayout();
@@ -159,6 +159,20 @@
             this.pnSideBar.TabIndex = 174;
             this.pnSideBar.Tag = "color:dark3";
             // 
+            // label4
+            // 
+            this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label4.BackColor = System.Drawing.Color.Transparent;
+            this.label4.Font = new System.Drawing.Font("Segoe UI", 8F);
+            this.label4.ForeColor = System.Drawing.Color.White;
+            this.label4.Location = new System.Drawing.Point(9, 125);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(102, 127);
+            this.label4.TabIndex = 124;
+            this.label4.Tag = "";
+            this.label4.Text = "Don\'t be stupid. Don\'t corrupt Windows, don\'t corrupt online games.\r\n\r\nRun this i" +
+    "n a VM for maximum safety.";
+            // 
             // lbTargetStatus
             // 
             this.lbTargetStatus.Font = new System.Drawing.Font("Segoe UI", 8F);
@@ -265,20 +279,6 @@
             this.tbAutoAttach.Size = new System.Drawing.Size(148, 21);
             this.tbAutoAttach.TabIndex = 177;
             this.tbAutoAttach.Tag = "color:dark2";
-            // 
-            // label4
-            // 
-            this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label4.BackColor = System.Drawing.Color.Transparent;
-            this.label4.Font = new System.Drawing.Font("Segoe UI", 8F);
-            this.label4.ForeColor = System.Drawing.Color.White;
-            this.label4.Location = new System.Drawing.Point(9, 138);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(102, 114);
-            this.label4.TabIndex = 124;
-            this.label4.Tag = "color:dark3";
-            this.label4.Text = "Don\'t be stupid. Don\'t corrupt Windows, don\'t corrupt online games.\r\n\r\nRun this i" +
-    "n a VM for maximum safety.";
             // 
             // StubForm
             // 

@@ -11,6 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using RTCV.NetCore.StaticTools;
 using Vanguard;
 
 namespace ProcessStub
@@ -63,7 +64,6 @@ namespace ProcessStub
             lbTarget.Location = btnBrowseTarget.Location;
             lbTarget.Visible = true;
 
-            btnTargetSettings.Visible = false;
 
             btnBrowseTarget.Visible = false;
             originalLbTargetSize = lbTarget.Size;
@@ -83,9 +83,7 @@ namespace ProcessStub
             lbTarget.Size = originalLbTargetSize;
             lbTarget.Location = originalLbTargetLocation;
             lbTarget.Visible = false;
-
-            btnTargetSettings.Visible = true;
-
+            
 
             lbTarget.Text = "No target selected";
             lbTargetStatus.Text = "No target selected";
@@ -144,6 +142,11 @@ namespace ProcessStub
                     tbAutoAttach.Enabled = ProcessWatch.AutoHookTimer.Enabled;
 
                 }))).Checked = ProcessWatch.AutoHookTimer.Enabled;
+
+                columnsMenu.Items.Add("Select Memory Protection Modes", null, new EventHandler((ob, ev) =>
+                {
+                    S.GET<MemoryProtectionSelector>().ShowDialog();
+                }));
 
 
                 columnsMenu.Show(this, locate);
