@@ -11,6 +11,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Bleak;
 using Vanguard;
 
 namespace ProcessStub
@@ -21,6 +22,8 @@ namespace ProcessStub
         public static string currentDir = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
         public static Process p;
         public static bool UseFiltering = true;
+        public static bool UseExceptionHandler = false;
+        public static bool UseBlacklist = true;
         static int CPU_STEP_Count = 0;
 
         public static ProgressForm progressForm;
@@ -77,13 +80,21 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
                     Environment.Exit(0);
                 File.Create(disclaimerReadPath);
 
-                if(Params.ReadParam("PROCESSMEMORYPROTECTION"))
             }
+
+            var protectionMode = Params.ReadParam("PROTECTIONMODE");
+            if (protectionMode != null)
+                ProtectMode = (Jupiter.MemoryProtection)Enum.Parse(typeof(Jupiter.MemoryProtection), protectionMode);
+
+
+            UseExceptionHandler = Params.ReadParam("USEEXCEPTIONHANDLER") == "True";
+            UseBlacklist = Params.ReadParam("USEBLACKLIST") != "False";
+            UseBlacklist = Params.ReadParam("USEBLACKLIST") != "False";
         }
 
         private static void CorruptTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
-            if (!VanguardCore.vanguardConnected)
+            if (!VanguardCore.vanguardConnected || AllSpec.CorruptCoreSpec == null)
             {
                 AutoCorruptTimer.Start();
                 return;
@@ -178,6 +189,19 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
             else
                 p = _p;
 
+            if (UseExceptionHandler)
+            {
+                ProcessExtensions.IsWow64Process(p.Handle, out bool is32BitProcess); //This method is stupid and returns the inverse
+                string path = is32BitProcess ? Path.Combine(currentDir, "ExceptionHandler_x86.dll") : Path.Combine(currentDir, "ExceptionHandler_x64.dll");
+                using (var i = new Injector(InjectionMethod.CreateThread, p.Id, path))
+                {
+                    if ((ulong)i.InjectDll() != 0)
+                    {
+                        Console.WriteLine("Injected exception helper successfully");
+                    }
+                }
+            }
+
             Action<object, EventArgs> action = (ob, ea) =>
             {
                 if (VanguardCore.vanguardConnected)
@@ -186,6 +210,9 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
 
             Action<object, EventArgs> postAction = (ob, ea) =>
             {
+
+
+
                 if (p == null)
                 {
                     MessageBox.Show("Failed to load target");
@@ -326,14 +353,21 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
 
         public static bool IsProcessBlacklisted(Process _p)
         {
+            if (_p.HasExited)
+                return true;
+
+            if (!UseBlacklist)
+                return false;
+
             return IsModuleBlacklisted(_p.MainModule);
         }
 
         public static bool IsModuleBlacklisted(ProcessModule pm)
         {
+            if (!UseBlacklist)
+                return false;
             try
             {
-
                 if (IsPathBlacklisted(pm?.FileName))
                     return true;
 
@@ -352,6 +386,9 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
 
         public static bool IsPathBlacklisted(string path)
         {
+            if (!UseBlacklist)
+                return false;
+
             var badNames = new string[]
             {
                 "\\Windows",
@@ -363,6 +400,9 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
         }
         public static bool IsProductNameBlacklisted(string productName)
         {
+            if (!UseBlacklist)
+                return false;
+
             var badNames = new string[]
             {
                 "Microsoft® Windows® Operating System",

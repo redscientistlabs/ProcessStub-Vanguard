@@ -126,15 +126,6 @@ namespace ProcessStub
                 ContextMenuStrip columnsMenu = new ContextMenuStrip();
 
 
-                ((ToolStripMenuItem)columnsMenu.Items.Add("Use Filtering", null, new EventHandler((ob, ev) =>
-                {
-
-                    ProcessWatch.UseFiltering = !ProcessWatch.UseFiltering;
-
-                    if (VanguardCore.vanguardConnected)
-                        ProcessWatch.UpdateDomains();
-
-                }))).Checked = ProcessWatch.UseFiltering;
                 ((ToolStripMenuItem)columnsMenu.Items.Add("Use AutoHook", null, new EventHandler((ob, ev) =>
                 {
 
@@ -143,6 +134,35 @@ namespace ProcessStub
 
                 }))).Checked = ProcessWatch.AutoHookTimer.Enabled;
 
+                ((ToolStripMenuItem)columnsMenu.Items.Add("Use Filtering", null, new EventHandler((ob, ev) =>
+                {
+
+                    ProcessWatch.UseFiltering = !ProcessWatch.UseFiltering;
+                    Params.SetParam("USEFILTERING", ProcessWatch.UseFiltering.ToString());
+
+                    if (VanguardCore.vanguardConnected)
+                        ProcessWatch.UpdateDomains();
+
+                }))).Checked = ProcessWatch.UseFiltering;
+
+                ((ToolStripMenuItem)columnsMenu.Items.Add("Use Exception Handler Override", null, new EventHandler((ob, ev) =>
+                {
+
+                    ProcessWatch.UseExceptionHandler = !ProcessWatch.UseExceptionHandler;
+                    Params.SetParam("USEEXCEPTIONHANDLER", ProcessWatch.UseExceptionHandler.ToString());
+
+
+                }))).Checked = ProcessWatch.UseExceptionHandler;
+
+                ((ToolStripMenuItem)columnsMenu.Items.Add("Use Blacklist", null, new EventHandler((ob, ev) =>
+                {
+
+                    ProcessWatch.UseBlacklist = !ProcessWatch.UseBlacklist;
+                    Params.SetParam("USEBLACKLIST", ProcessWatch.UseBlacklist.ToString());
+
+
+                }))).Checked = ProcessWatch.UseBlacklist;
+                
                 columnsMenu.Items.Add("Select Memory Protection Modes", null, new EventHandler((ob, ev) =>
                 {
                     S.GET<MemoryProtectionSelector>().ShowDialog();

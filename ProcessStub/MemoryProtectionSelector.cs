@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using RTCV.CorruptCore;
+using RTCV.NetCore;
 using static RTCV.UI.UI_Extensions;
 using RTCV.NetCore.StaticTools;
 using RTCV.UI;
@@ -57,6 +58,7 @@ namespace ProcessStub
             }
 
             ProcessWatch.ProtectMode = a;
+            Params.SetParam("PROTECTIONMODE", ((uint)a).ToString());
             ProcessWatch.UpdateDomains();
         }
 	}
