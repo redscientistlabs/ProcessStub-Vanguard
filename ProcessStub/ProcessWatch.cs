@@ -58,9 +58,7 @@ namespace ProcessStub
             if (!Directory.Exists(paramsPath))
                 Directory.CreateDirectory(paramsPath);
 
-            string disclaimerReadPath = Path.Combine(currentDir, "PARAMS", "DISCLAIMERREAD");
-
-            if (!File.Exists(disclaimerReadPath))
+            if(!Params.IsParamSet("DISCLAIMERREAD"))
             {
                 var disclaimer = $@"Welcome to ProcessStub
 Version {ProcessWatch.ProcessStubVersion}
@@ -78,8 +76,8 @@ as the result of use of this software.
 By clicking 'Yes' you agree that you have read this warning in full and are aware of any potential consequences of use of the program. If you do not agree, click 'No' to exit this software.";
                 if (MessageBox.Show(disclaimer, "Process Stub", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
                     Environment.Exit(0);
-                File.Create(disclaimerReadPath);
-
+                
+                Params.SetParam("DISCLAIMERREAD");
             }
 
             var protectionMode = Params.ReadParam("PROTECTIONMODE");
