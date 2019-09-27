@@ -1,21 +1,18 @@
-﻿using RTCV.NetCore.StaticTools;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using RTCV.NetCore.StaticTools;
 
 namespace ProcessStub
 {
-    static class Program
+    internal static class Program
     {
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main()
+        private static void Main()
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
@@ -24,16 +21,16 @@ namespace ProcessStub
             Initialize();
         }
 
-        static void Initialize()
+        private static void Initialize()
         {
             var frm = new StubForm();
-            S.SET<StubForm>(frm);
+            S.SET(frm);
             Application.Run(frm);
         }
 
 
         //Lifted from Bizhawk
-        static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
+        private static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
         {
             try
             {
@@ -43,19 +40,14 @@ namespace ProcessStub
                     var asms = AppDomain.CurrentDomain.GetAssemblies();
                     foreach (var asm in asms)
                         if (asm.FullName == requested)
-                        {
                             return asm;
-                        }
 
                     //load missing assemblies by trying to find them in the dll directory
                     string dllname = new AssemblyName(requested).Name + ".dll";
                     string directory = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "..", "RTCV");
                     string simpleName = new AssemblyName(requested).Name;
                     string fname = Path.Combine(directory, dllname);
-                    if (!File.Exists(fname))
-                    {
-                        return null;
-                    }
+                    if (!File.Exists(fname)) return null;
 
                     //it is important that we use LoadFile here and not load from a byte array; otherwise mixed (managed/unamanged) assemblies can't load
                     return Assembly.LoadFile(fname);

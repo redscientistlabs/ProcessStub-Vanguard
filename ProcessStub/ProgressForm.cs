@@ -1,23 +1,16 @@
-﻿using RTCV.NetCore;
-using RTCV.NetCore.StaticTools;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using RTCV.NetCore;
+using RTCV.NetCore.StaticTools;
 
 namespace ProcessStub
 {
     public partial class ProgressForm : Form
     {
+        public static Action<object, EventArgs> postAction;
         public BackgroundWorker bw = new BackgroundWorker();
-        string defaultLabel;
-
-        public static Action<object, EventArgs> postAction = null;
+        private readonly string defaultLabel;
 
         public ProgressForm(string lbText, int maxprogress, Action<object, EventArgs> actionRegistrant, Action<object, EventArgs> postActionRegistrant = null)
         {
@@ -45,7 +38,7 @@ namespace ProcessStub
             Size = S.GET<StubForm>().Size;
 
             S.GET<StubForm>().Controls.Add(this);
-            Anchor = (AnchorStyles)(AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Bottom);
+            Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Bottom;
             Show();
             BringToFront();
 
@@ -61,16 +54,13 @@ namespace ProcessStub
         private void Bw_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             bw.Dispose();
-            this.Hide();
+            Hide();
             ProcessWatch.progressForm = null;
 
             if (postAction != null)
-            {
                 SyncObjectSingleton.FormExecute(() => {
                     postAction.Invoke(null, null);
                 });
-            }
-                
         }
 
         private void Bw_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -85,13 +75,12 @@ namespace ProcessStub
 
             if (e.UserState != null && e.UserState is string)
             {
-                if((e.UserState as string) == "DEFAULT")
+                if(e.UserState as string == "DEFAULT")
                     lbProgress.Text = defaultLabel;
                 else
-                    lbProgress.Text = (e.UserState as string);
+                    lbProgress.Text = e.UserState as string;
             }
 
         }
-
     }
 }
