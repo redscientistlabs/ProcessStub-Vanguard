@@ -18,7 +18,7 @@ namespace ProcessStub
 {
     public static class ProcessWatch
     {
-        public static string ProcessStubVersion = "0.0.3";
+        public static string ProcessStubVersion = "0.0.4";
         public static string currentDir = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
         public static Process p;
         public static bool UseFiltering = true;
@@ -208,9 +208,6 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
 
             Action<object, EventArgs> postAction = (ob, ea) =>
             {
-
-
-
                 if (p == null)
                 {
                     MessageBox.Show("Failed to load target");
@@ -318,13 +315,12 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
                                 {
                                     if (!String.IsNullOrWhiteSpace(name))
                                         Console.WriteLine($"Adding mbi {name.Split('\\').Last()}  {mbi.Protect} {ProtectMode}");
-                                    ProcessMemoryDomain pmd = new ProcessMemoryDomain(_p, mbi.BaseAddress, (long)mbi.RegionSize);
+                                    ProcessMemoryDomain pmd = new ProcessMemoryDomain(_p, mbi.BaseAddress, (long)mbi.RegionSize, mbi.Protect);
                                     interfaces.Add(new MemoryDomainProxy(pmd));
                                 }
                             }
                         }
                     }
-
                     addr = new IntPtr((long)mbi.BaseAddress + (long)mbi.RegionSize);
                 }
 

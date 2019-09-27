@@ -29,7 +29,6 @@ namespace ProcessStub
             var frm = new StubForm();
             S.SET<StubForm>(frm);
             Application.Run(frm);
-
         }
 
 
