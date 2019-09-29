@@ -12,7 +12,7 @@ namespace Vanguard
     public static class VanguardImplementation
     {
         public static VanguardConnector connector;
-
+        private static bool suspendWarned = false;
 
         public static void StartClient()
         {
@@ -76,9 +76,42 @@ namespace Vanguard
                         break;
 
                     case REMOTE_PRECORRUPTACTION:
+                        if (ProcessWatch.SuspendProcess)
+                        {
+                            if (!ProcessWatch.p?.Suspend() ?? true && !suspendWarned)
+                            {
+                                suspendWarned = (MessageBox.Show("Failed to suspend a thread!\nWould you like to continue to receive warnings?", "Failed to suspend thread", MessageBoxButtons.YesNo, MessageBoxIcon.Error) == DialogResult.Yes);
+                            }
+                        }
+
+                        foreach (var m in MemoryDomains.MemoryInterfaces.Values)
+                        {
+                            if (m.MD is ProcessMemoryDomain pmd)
+                            {
+                                pmd.SetMemoryProtection(Jupiter.MemoryProtection.ExecuteReadWrite);
+                            }
+                        }
+
                         break;
 
                     case REMOTE_POSTCORRUPTACTION:
+
+                        foreach (var m in MemoryDomains.MemoryInterfaces.Values)
+                        {
+                            if (m.MD is ProcessMemoryDomain pmd)
+                            {
+                                pmd.ResetMemoryProtection();
+                            }
+                        }
+
+                        if (ProcessWatch.SuspendProcess)
+                        {
+                            if (!ProcessWatch.p?.Resume() ?? true && !suspendWarned)
+                            {
+                                suspendWarned = (MessageBox.Show("Failed to resume a thread!\nWould you like to continue to receive warnings?", "Failed to resume thread", MessageBoxButtons.YesNo, MessageBoxIcon.Error) == DialogResult.Yes);
+                            }
+                        }
+
                         break;
 
                     case REMOTE_CLOSEGAME:

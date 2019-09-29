@@ -24,6 +24,7 @@ namespace ProcessStub
         public static bool UseFiltering = true;
         public static bool UseExceptionHandler;
         public static bool UseBlacklist = true;
+        public static bool SuspendProcess = false;
         private static int CPU_STEP_Count;
 
         public static ProgressForm progressForm;
@@ -86,7 +87,8 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
 
 
             UseExceptionHandler = Params.ReadParam("USEEXCEPTIONHANDLER") == "True";
-            UseBlacklist = Params.ReadParam("USEBLACKLIST") != "False";
+            SuspendProcess = Params.ReadParam("SUSPENDPROCESS") == "True";
+            UseFiltering = Params.ReadParam("USEFILTERING") != "False";
             UseBlacklist = Params.ReadParam("USEBLACKLIST") != "False";
         }
 
@@ -285,7 +287,8 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
                         return new MemoryDomainProxy[] { };
 
 
-                    if (ProcessExtensions.VirtualQueryEx(_p, addr, out var mbi) == false) break;
+                    if (ProcessExtensions.VirtualQueryEx(_p, addr, out var mbi) == false)
+                        break;
 
                     var name = ProcessExtensions.GetMappedFileNameW(_p.Handle, mbi.BaseAddress);
                     if (string.IsNullOrWhiteSpace(name) || !IsPathBlacklisted(name))
@@ -297,7 +300,7 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
                                 {
                                     if (!string.IsNullOrWhiteSpace(name))
                                         Console.WriteLine($"Adding mbi {name.Split('\\').Last()}  {mbi.Protect} {ProtectMode}");
-                                    ProcessMemoryDomain pmd = new ProcessMemoryDomain(_p, mbi.BaseAddress, (long)mbi.RegionSize, mbi.Protect);
+                                    ProcessMemoryDomain pmd = new ProcessMemoryDomain(_p, mbi.BaseAddress, (long)mbi.RegionSize);
                                     interfaces.Add(new MemoryDomainProxy(pmd));
                                 }
                     }

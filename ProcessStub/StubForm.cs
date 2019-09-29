@@ -155,8 +155,16 @@ namespace ProcessStub
 
 
                 })).Checked = ProcessWatch.UseBlacklist;
-                
-                columnsMenu.Items.Add("Select Memory Protection Modes", null, (ob, ev) =>
+                ((ToolStripMenuItem)columnsMenu.Items.Add("Suspend Process on Corrupt", null, (ob, ev) =>
+                {
+
+                    ProcessWatch.SuspendProcess = !ProcessWatch.SuspendProcess;
+                    Params.SetParam("SUSPENDPROCESS", ProcessWatch.SuspendProcess.ToString());
+
+                })).Checked = ProcessWatch.SuspendProcess;
+
+                columnsMenu.Items.Add(new ToolStripSeparator());
+                columnsMenu.Items.Add("Select Memory Protection Modes to Corrupt", null, (ob, ev) =>
                 {
                     S.GET<MemoryProtectionSelector>().ShowDialog();
                 });
