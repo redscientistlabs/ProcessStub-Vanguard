@@ -1,27 +1,18 @@
-﻿using RTCV.NetCore;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Text;
+﻿using System;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using RTCV;
-using RTCV.CorruptCore;
-using static RTCV.NetCore.NetcoreCommands;
 using ProcessStub;
-using RTCV.NetCore.StaticTools;
+using RTCV.CorruptCore;
+using RTCV.NetCore;
+using RTCV.Vanguard;
+using static RTCV.NetCore.NetcoreCommands;
 
 namespace Vanguard
 {
     public static class VanguardImplementation
     {
-        public static RTCV.Vanguard.VanguardConnector connector = null;
-
+        public static VanguardConnector connector;
+        private static bool suspendWarned = false;
 
         public static void StartClient()
         {
@@ -35,12 +26,12 @@ namespace Vanguard
                 spec.Attached = VanguardCore.attached;
                 spec.MessageReceived += OnMessageReceived;
 
-                connector = new RTCV.Vanguard.VanguardConnector(spec);
+                connector = new VanguardConnector(spec);
             }
             catch (Exception ex)
             {
                 if (VanguardCore.ShowErrorDialog(ex, true) == DialogResult.Abort)
-                    throw new RTCV.NetCore.AbortEverythingException();
+                    throw new AbortEverythingException();
             }
         }
 
@@ -85,9 +76,42 @@ namespace Vanguard
                         break;
 
                     case REMOTE_PRECORRUPTACTION:
+                        if (ProcessWatch.SuspendProcess)
+                        {
+                            if (!ProcessWatch.p?.Suspend() ?? true && !suspendWarned)
+                            {
+                                suspendWarned = (MessageBox.Show("Failed to suspend a thread!\nWould you like to continue to receive warnings?", "Failed to suspend thread", MessageBoxButtons.YesNo, MessageBoxIcon.Error) == DialogResult.Yes);
+                            }
+                        }
+
+                        foreach (var m in MemoryDomains.MemoryInterfaces.Values)
+                        {
+                            if (m.MD is ProcessMemoryDomain pmd)
+                            {
+                                pmd.SetMemoryProtection(Jupiter.MemoryProtection.ExecuteReadWrite);
+                            }
+                        }
+
                         break;
 
                     case REMOTE_POSTCORRUPTACTION:
+
+                        foreach (var m in MemoryDomains.MemoryInterfaces.Values)
+                        {
+                            if (m.MD is ProcessMemoryDomain pmd)
+                            {
+                                pmd.ResetMemoryProtection();
+                            }
+                        }
+
+                        if (ProcessWatch.SuspendProcess)
+                        {
+                            if (!ProcessWatch.p?.Resume() ?? true && !suspendWarned)
+                            {
+                                suspendWarned = (MessageBox.Show("Failed to resume a thread!\nWould you like to continue to receive warnings?", "Failed to resume thread", MessageBoxButtons.YesNo, MessageBoxIcon.Error) == DialogResult.Yes);
+                            }
+                        }
+
                         break;
 
                     case REMOTE_CLOSEGAME:
@@ -122,9 +146,8 @@ namespace Vanguard
             catch (Exception ex)
             {
                 if (VanguardCore.ShowErrorDialog(ex, true) == DialogResult.Abort)
-                    throw new RTCV.NetCore.AbortEverythingException();
+                    throw new AbortEverythingException();
             }
         }
-
     }
 }

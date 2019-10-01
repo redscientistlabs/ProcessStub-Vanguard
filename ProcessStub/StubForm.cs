@@ -1,23 +1,19 @@
-﻿using RTCV.CorruptCore;
-using RTCV.NetCore;
-using RTCV.UI;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
+﻿using System;
 using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using RTCV.NetCore;
 using RTCV.NetCore.StaticTools;
+using RTCV.UI;
 using Vanguard;
 
 namespace ProcessStub
 {
     public partial class StubForm : Form
     {
+        private Point originalLbTargetLocation;
+
+
+        private Size originalLbTargetSize;
 
         public StubForm()
         {
@@ -35,7 +31,7 @@ namespace ProcessStub
 
             tbFilterText.DeselectAll();
             tbAutoAttach.DeselectAll();
-            this.Focus();
+            Focus();
 
             ProcessWatch.Start();
         }
@@ -46,7 +42,7 @@ namespace ProcessStub
             if (ProcessWatch.progressForm != null)
             {
                 ProcessWatch.progressForm.Close();
-                this.Controls.Remove(ProcessWatch.progressForm);
+                Controls.Remove(ProcessWatch.progressForm);
                 ProcessWatch.progressForm = null;
             }
 
@@ -54,9 +50,6 @@ namespace ProcessStub
             ProcessWatch.progressForm.Run();
         }
 
-
-        Size originalLbTargetSize;
-        Point originalLbTargetLocation;
         public void EnableTargetInterface()
         {
             var diff = lbTarget.Location.X - btnBrowseTarget.Location.X;
@@ -126,15 +119,15 @@ namespace ProcessStub
                 ContextMenuStrip columnsMenu = new ContextMenuStrip();
 
 
-                ((ToolStripMenuItem)columnsMenu.Items.Add("Use AutoHook", null, new EventHandler((ob, ev) =>
+                ((ToolStripMenuItem)columnsMenu.Items.Add("Use AutoHook", null, (ob, ev) =>
                 {
 
                     ProcessWatch.AutoHookTimer.Enabled = !ProcessWatch.AutoHookTimer.Enabled;
                     tbAutoAttach.Enabled = ProcessWatch.AutoHookTimer.Enabled;
 
-                }))).Checked = ProcessWatch.AutoHookTimer.Enabled;
+                })).Checked = ProcessWatch.AutoHookTimer.Enabled;
 
-                ((ToolStripMenuItem)columnsMenu.Items.Add("Use Filtering", null, new EventHandler((ob, ev) =>
+                ((ToolStripMenuItem)columnsMenu.Items.Add("Use Filtering", null, (ob, ev) =>
                 {
 
                     ProcessWatch.UseFiltering = !ProcessWatch.UseFiltering;
@@ -143,30 +136,38 @@ namespace ProcessStub
                     if (VanguardCore.vanguardConnected)
                         ProcessWatch.UpdateDomains();
 
-                }))).Checked = ProcessWatch.UseFiltering;
+                })).Checked = ProcessWatch.UseFiltering;
 
-                ((ToolStripMenuItem)columnsMenu.Items.Add("Use Exception Handler Override", null, new EventHandler((ob, ev) =>
+                ((ToolStripMenuItem)columnsMenu.Items.Add("Use Exception Handler Override", null, (ob, ev) =>
                 {
 
                     ProcessWatch.UseExceptionHandler = !ProcessWatch.UseExceptionHandler;
                     Params.SetParam("USEEXCEPTIONHANDLER", ProcessWatch.UseExceptionHandler.ToString());
 
 
-                }))).Checked = ProcessWatch.UseExceptionHandler;
+                })).Checked = ProcessWatch.UseExceptionHandler;
 
-                ((ToolStripMenuItem)columnsMenu.Items.Add("Use Blacklist", null, new EventHandler((ob, ev) =>
+                ((ToolStripMenuItem)columnsMenu.Items.Add("Use Blacklist", null, (ob, ev) =>
                 {
 
                     ProcessWatch.UseBlacklist = !ProcessWatch.UseBlacklist;
                     Params.SetParam("USEBLACKLIST", ProcessWatch.UseBlacklist.ToString());
 
 
-                }))).Checked = ProcessWatch.UseBlacklist;
-                
-                columnsMenu.Items.Add("Select Memory Protection Modes", null, new EventHandler((ob, ev) =>
+                })).Checked = ProcessWatch.UseBlacklist;
+                ((ToolStripMenuItem)columnsMenu.Items.Add("Suspend Process on Corrupt", null, (ob, ev) =>
+                {
+
+                    ProcessWatch.SuspendProcess = !ProcessWatch.SuspendProcess;
+                    Params.SetParam("SUSPENDPROCESS", ProcessWatch.SuspendProcess.ToString());
+
+                })).Checked = ProcessWatch.SuspendProcess;
+
+                columnsMenu.Items.Add(new ToolStripSeparator());
+                columnsMenu.Items.Add("Select Memory Protection Modes to Corrupt", null, (ob, ev) =>
                 {
                     S.GET<MemoryProtectionSelector>().ShowDialog();
-                }));
+                });
 
 
                 columnsMenu.Show(this, locate);

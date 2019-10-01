@@ -22,6 +22,7 @@ namespace ProcessStub
         public static bool UseFiltering = true;
         public static bool UseExceptionHandler = false;
         public static bool UseBlacklist = true;
+        public static bool SuspendProcess = false;
         public static Object CorruptLock = new object();
         static int CPU_STEP_Count = 0;
 
@@ -86,7 +87,8 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
 
             UseExceptionHandler = Params.ReadParam("USEEXCEPTIONHANDLER") == "True";
             UseBlacklist = Params.ReadParam("USEBLACKLIST") != "False";
-            UseBlacklist = Params.ReadParam("USEBLACKLIST") != "False";
+            SuspendProcess = Params.ReadParam("SUSPENDPROCESS") == "True";
+            UseFiltering = Params.ReadParam("USEFILTERING") != "False";
         }
 
         private static void CorruptTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
