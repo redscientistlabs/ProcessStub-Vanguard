@@ -1,16 +1,14 @@
-﻿using Newtonsoft.Json;
-using RTCV.CorruptCore;
-using RTCV.NetCore;
-using RTCV.NetCore.StaticTools;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using System.Windows.Forms;
+using RTCV.CorruptCore;
+using RTCV.NetCore;
+using RTCV.NetCore.StaticTools;
 using Bleak;
 using Vanguard;
 
@@ -24,6 +22,7 @@ namespace ProcessStub
         public static bool UseFiltering = true;
         public static bool UseExceptionHandler = false;
         public static bool UseBlacklist = true;
+        public static Object CorruptLock = new object();
         static int CPU_STEP_Count = 0;
 
         public static ProgressForm progressForm;
@@ -92,41 +91,44 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
 
         private static void CorruptTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
-            if (!VanguardCore.vanguardConnected || AllSpec.CorruptCoreSpec == null)
+            lock (CorruptLock)
             {
-                AutoCorruptTimer.Start();
-                return;
-            }
+                if (!VanguardCore.vanguardConnected || AllSpec.CorruptCoreSpec == null)
+                {
+                    AutoCorruptTimer.Start();
+                    return;
+                }
 
-            try
-            {
-                StepActions.Execute();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Corrupt Error!\n{ex.Message}\n{ex.StackTrace}");
-            }
-
-            CPU_STEP_Count++;
-            bool autoCorrupt = RtcCore.AutoCorrupt;
-            long errorDelay = RtcCore.ErrorDelay;
-            if (autoCorrupt && CPU_STEP_Count >= errorDelay)
-            {
                 try
                 {
-                    CPU_STEP_Count = 0;
-                    BlastLayer bl = RtcCore.GenerateBlastLayer((string[])AllSpec.UISpec["SELECTEDDOMAINS"]);
-                    if (bl != null)
-                        bl.Apply(false, false);
+                    StepActions.Execute();
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"AutoCorrupt Error!\n{ex.Message}\n{ex.StackTrace}");
+                    Console.WriteLine($"Corrupt Error!\n{ex.Message}\n{ex.StackTrace}");
                 }
 
-            }
+                CPU_STEP_Count++;
+                bool autoCorrupt = RtcCore.AutoCorrupt;
+                long errorDelay = RtcCore.ErrorDelay;
+                if (autoCorrupt && CPU_STEP_Count >= errorDelay)
+                {
+                    try
+                    {
+                        CPU_STEP_Count = 0;
+                        BlastLayer bl = RtcCore.GenerateBlastLayer((string[])AllSpec.UISpec["SELECTEDDOMAINS"]);
+                        if (bl != null)
+                            bl.Apply(false, false);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"AutoCorrupt Error!\n{ex.Message}\n{ex.StackTrace}");
+                    }
 
-            AutoCorruptTimer.Start();
+                }
+
+                AutoCorruptTimer.Start();
+            }
         }
 
         private static void AutoHookTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
@@ -144,6 +146,7 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
                 var _p = Process.GetProcesses().First(x => x.ProcessName == procToFind);
                 if (_p != null)
                 {
+                    Thread.Sleep(2000); //Give the process 2 seconds
                     SyncObjectSingleton.FormExecute(() =>
                     {
                         LoadTarget(_p);
@@ -165,66 +168,75 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
 
         internal static bool LoadTarget(Process _p = null)
         {
-            if (_p == null)
+            lock (CorruptLock)
             {
-                using (var f = new HookProcessForm())
+                if (_p == null)
                 {
-                    if (f.ShowDialog() != DialogResult.OK)
-                        return false;
+                    using (var f = new HookProcessForm())
+                    {
+                        if (f.ShowDialog() != DialogResult.OK)
+                            return false;
 
-                    if (f.RequestedProcess == null || (f.RequestedProcess?.HasExited ?? true))
-                    {
-                        return false;
+                        if (f.RequestedProcess == null || (f.RequestedProcess?.HasExited ?? true))
+                        {
+                            return false;
+                        }
+
+                        if (IsProcessBlacklisted(f.RequestedProcess))
+                        {
+                            MessageBox.Show("Blacklisted process");
+                            return false;
+                        }
+
+                        p = f.RequestedProcess;
                     }
-                    if (IsProcessBlacklisted(f.RequestedProcess))
-                    {
-                        MessageBox.Show("Blacklisted process");
-                        return false;
-                    }
-                    p = f.RequestedProcess;
                 }
+                else
+                    p = _p;
+
+                if (UseExceptionHandler)
+                {
+                    ProcessExtensions.IsWow64Process(p.Handle,
+                        out bool is32BitProcess); //This method is stupid and returns the inverse
+                    string path = is32BitProcess
+                        ? Path.Combine(currentDir, "ExceptionHandler_x86.dll")
+                        : Path.Combine(currentDir, "ExceptionHandler_x64.dll");
+                    using (var i = new Injector(InjectionMethod.CreateThread, p.Id, path))
+                    {
+                        if ((ulong) i.InjectDll() != 0)
+                        {
+                            Console.WriteLine("Injected exception helper successfully");
+                        }
+                    }
+                }
+
+                Action<object, EventArgs> action = (ob, ea) =>
+                {
+                    if (VanguardCore.vanguardConnected)
+                        UpdateDomains();
+                };
+
+                Action<object, EventArgs> postAction = (ob, ea) =>
+                {
+
+
+
+                    if (p == null)
+                    {
+                        MessageBox.Show("Failed to load target");
+                        S.GET<StubForm>().DisableTargetInterface();
+                        return;
+                    }
+
+                    S.GET<StubForm>().lbTarget.Text = p.ProcessName;
+                    S.GET<StubForm>().lbTargetStatus.Text = "Hooked!";
+
+
+                    //Refresh the UI
+                    //RefreshUIPostLoad();
+                };
+                S.GET<StubForm>().RunProgressBar($"Loading target...", 0, action, postAction);
             }
-            else
-                p = _p;
-
-            if (UseExceptionHandler)
-            {
-                ProcessExtensions.IsWow64Process(p.Handle, out bool is32BitProcess); //This method is stupid and returns the inverse
-                string path = is32BitProcess ? Path.Combine(currentDir, "ExceptionHandler_x86.dll") : Path.Combine(currentDir, "ExceptionHandler_x64.dll");
-                using (var i = new Injector(InjectionMethod.CreateThread, p.Id, path))
-                {
-                    if ((ulong)i.InjectDll() != 0)
-                    {
-                        Console.WriteLine("Injected exception helper successfully");
-                    }
-                }
-            }
-
-            Action<object, EventArgs> action = (ob, ea) =>
-            {
-                if (VanguardCore.vanguardConnected)
-                    UpdateDomains();
-            };
-
-            Action<object, EventArgs> postAction = (ob, ea) =>
-            {
-
-
-
-                if (p == null)
-                {
-                    MessageBox.Show("Failed to load target");
-                    S.GET<StubForm>().DisableTargetInterface();
-                    return;
-                }
-                S.GET<StubForm>().lbTarget.Text = p.ProcessName;
-                S.GET<StubForm>().lbTargetStatus.Text = "Hooked!";
-
-
-                //Refresh the UI
-                //RefreshUIPostLoad();
-            };
-            S.GET<StubForm>().RunProgressBar($"Loading target...", 0, action, postAction);
 
             return true;
         }
