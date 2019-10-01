@@ -16,7 +16,7 @@ namespace ProcessStub
 {
     public static class ProcessWatch
     {
-        public static string ProcessStubVersion = "0.0.3";
+        public static string ProcessStubVersion = "0.0.4";
         public static string currentDir = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
         public static Process p;
         public static bool UseFiltering = true;
@@ -203,11 +203,14 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
                     string path = is32BitProcess
                         ? Path.Combine(currentDir, "ExceptionHandler_x86.dll")
                         : Path.Combine(currentDir, "ExceptionHandler_x64.dll");
-                    using (var i = new Injector(InjectionMethod.CreateThread, p.Id, path))
+                    if (File.Exists(path))
                     {
-                        if ((ulong) i.InjectDll() != 0)
+                        using (var i = new Injector(InjectionMethod.CreateThread, p.Id, path))
                         {
-                            Console.WriteLine("Injected exception helper successfully");
+                            if ((ulong)i.InjectDll() != 0)
+                            {
+                                Console.WriteLine("Injected exception helper successfully");
+                            }
                         }
                     }
                 }
