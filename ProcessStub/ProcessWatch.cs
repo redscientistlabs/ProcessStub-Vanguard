@@ -29,6 +29,7 @@ namespace ProcessStub
         public static ProgressForm progressForm;
         public static System.Timers.Timer AutoHookTimer;
         public static System.Timers.Timer AutoCorruptTimer;
+        public static ImageList ProcessIcons = new ImageList();
 
         public static ProcessExtensions.MemoryProtection ProtectMode = ProcessExtensions.MemoryProtection.ReadWrite;
 
