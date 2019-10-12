@@ -88,7 +88,7 @@ namespace Vanguard
                         {
                             if (m.MD is ProcessMemoryDomain pmd)
                             {
-                                pmd.SetMemoryProtection(Jupiter.MemoryProtection.ExecuteReadWrite);
+                                pmd.SetMemoryProtection(ProcessExtensions.MemoryProtection.ExecuteReadWrite);
                             }
                         }
 

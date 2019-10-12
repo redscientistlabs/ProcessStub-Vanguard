@@ -139,7 +139,7 @@ namespace Vanguard
             partial[VSPEC.SUPPORTS_REALTIME] = true;
             partial[VSPEC.SUPPORTS_KILLSWITCH] = false;
             partial[VSPEC.SUPPORTS_MIXED_STOCKPILE] = false;
-            partial[VSPEC.REPLACE_MANUALBLAST_WITH_GHCORRUPT] = false;
+            partial[VSPEC.REPLACE_MANUALBLAST_WITH_GHCORRUPT] = true;
             partial[VSPEC.EMUDIR] = emuDir;
             partial[VSPEC.SUPPORTS_MULTITHREAD] = true;
 

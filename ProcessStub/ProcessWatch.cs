@@ -16,7 +16,7 @@ namespace ProcessStub
 {
     public static class ProcessWatch
     {
-        public static string ProcessStubVersion = "0.0.4";
+        public static string ProcessStubVersion = "0.0.5";
         public static string currentDir = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
         public static Process p;
         public static bool UseFiltering = true;
@@ -30,7 +30,7 @@ namespace ProcessStub
         public static System.Timers.Timer AutoHookTimer;
         public static System.Timers.Timer AutoCorruptTimer;
 
-        public static Jupiter.MemoryProtection ProtectMode = Jupiter.MemoryProtection.ReadWrite;
+        public static ProcessExtensions.MemoryProtection ProtectMode = ProcessExtensions.MemoryProtection.ReadWrite;
 
         public static void Start()
         {
@@ -82,7 +82,7 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
 
             var protectionMode = Params.ReadParam("PROTECTIONMODE");
             if (protectionMode != null)
-                ProtectMode = (Jupiter.MemoryProtection)Enum.Parse(typeof(Jupiter.MemoryProtection), protectionMode);
+                ProtectMode = (ProcessExtensions.MemoryProtection)Enum.Parse(typeof(ProcessExtensions.MemoryProtection), protectionMode);
 
 
             UseExceptionHandler = Params.ReadParam("USEEXCEPTIONHANDLER") == "True";
@@ -341,10 +341,8 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
                             }
                         }
                     }
-
                     addr = new IntPtr((long)mbi.BaseAddress + (long)mbi.RegionSize);
                 }
-
 
                 return interfaces.ToArray();
             }
@@ -368,13 +366,17 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
 
         public static bool IsProcessBlacklisted(Process _p)
         {
-            if (_p.HasExited)
-                return true;
-
             if (!UseBlacklist)
                 return false;
 
-            return IsModuleBlacklisted(_p.MainModule);
+            try
+            {
+                return IsModuleBlacklisted(_p.MainModule);
+            }catch(InvalidOperationException e)
+            {
+                Console.WriteLine($"IsProcessBlacklisted threw exception {e}");
+                return true;
+            }
         }
 
         public static bool IsModuleBlacklisted(ProcessModule pm)
@@ -383,7 +385,14 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
                 return false;
             try
             {
-                if (IsPathBlacklisted(pm?.FileName))
+                var filename = "";
+                if (!String.IsNullOrWhiteSpace(pm?.FileName))
+                    filename = Path.GetFileName(pm.FileName);
+
+                if (IsExecutableNameBlacklisted(filename))
+                    return true;
+
+                if (IsPathBlacklisted(filename))
                     return true;
 
                 if (pm?.FileVersionInfo?.ProductName != null)
@@ -404,12 +413,11 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
             if (!UseBlacklist)
                 return false;
 
-            var badNames = new string[]
+            var blacklisted = new string[]
             {
-                "\\Windows",
-                "System32",
+                Environment.GetFolderPath(Environment.SpecialFolder.Windows),
             };
-            if (badNames.Any(x => path.Contains(x)))
+            if (blacklisted.Any(x => path.Contains(x)))
                 return true;
             return false;
         }
@@ -418,12 +426,49 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
             if (!UseBlacklist)
                 return false;
 
-            var badNames = new string[]
+            var blacklisted = new string[]
             {
                 "Microsoft® Windows® Operating System",
             };
-            if (badNames.Any(x => productName.Equals(x)))
+            if (blacklisted.Any(x => productName.Equals(x, StringComparison.OrdinalIgnoreCase)))
                 return true;
+            return false;
+        }
+
+        public static bool IsExecutableNameBlacklisted(string executableName)
+        {
+            //We have certain files we never want corrupted because we know people are going to be stupid and corrupt these online games
+            var hardBlacklisted = new string[]
+            {
+                "r5apex", //Apex Legends
+                "Roblox", //Roblox
+                "RobloxPlayerLauncher", //Roblox
+                "FortniteLauncher",
+                "FortniteClient-Win64-Shipping_EAC",
+                "FortniteClient-Win64-Shipping_BE",
+                "FortniteClient-Win64-Shipping",
+                "TsLGame", //pubg
+                "SteamService", //Hosts VAC 
+                "Steam",
+                "steamwebhelper",
+                "Origin",
+                "OriginWebHelperService",
+                "Discord",
+            };
+            if (hardBlacklisted.Any(x => executableName.Equals(x, StringComparison.OrdinalIgnoreCase)))
+                return true;
+
+
+            if (!UseBlacklist)
+                return false;
+
+            var blacklisted = new string[]
+            {
+
+            };
+            if (blacklisted.Any(x => executableName.Equals(x, StringComparison.OrdinalIgnoreCase)))
+                return true;
+
             return false;
         }
     }

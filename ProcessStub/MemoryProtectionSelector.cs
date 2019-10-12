@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using Jupiter;
+using RTCV.CorruptCore;
 using RTCV.NetCore;
 using RTCV.NetCore.StaticTools;
 using RTCV.UI;
@@ -22,14 +22,14 @@ namespace ProcessStub
         private void MemoryProtectionSelector_Load(object sender, EventArgs e)
         {
             tablePanel.Controls.Clear();
-            foreach (var t in Enum.GetNames(typeof(MemoryProtection)).Where(x => x != MemoryProtection.ZeroAccess.ToString()))
+            foreach (var t in Enum.GetNames(typeof(ProcessExtensions.MemoryProtection)).Where(x => x != ProcessExtensions.MemoryProtection.ZeroAccess.ToString()))
             {
                 CheckBox cb = new CheckBox
                 {
                     AutoSize = true,
                     Text = t,
                     Name = t,
-                    Checked = (ProcessWatch.ProtectMode & (MemoryProtection)Enum.Parse(typeof(MemoryProtection), t)) >= (MemoryProtection)Enum.Parse(typeof(MemoryProtection), t)
+                    Checked = (ProcessWatch.ProtectMode & (ProcessExtensions.MemoryProtection)Enum.Parse(typeof(ProcessExtensions.MemoryProtection), t)) >= (ProcessExtensions.MemoryProtection)Enum.Parse(typeof(ProcessExtensions.MemoryProtection), t)
                 };
                 tablePanel.Controls.Add(cb);
             }
@@ -45,8 +45,8 @@ namespace ProcessStub
 				return;
             }
 
-            MemoryProtection a = MemoryProtection.ZeroAccess;
-            foreach (CheckBox cb in tablePanel.Controls.Cast<CheckBox>().Where(item => item.Checked)) a = a | (MemoryProtection) Enum.Parse(typeof(MemoryProtection), cb.Text);
+            ProcessExtensions.MemoryProtection a = ProcessExtensions.MemoryProtection.ZeroAccess;
+            foreach (CheckBox cb in tablePanel.Controls.Cast<CheckBox>().Where(item => item.Checked)) a = a | (ProcessExtensions.MemoryProtection) Enum.Parse(typeof(ProcessExtensions.MemoryProtection), cb.Text);
 
             ProcessWatch.ProtectMode = a;
             Params.SetParam("PROTECTIONMODE", ((uint)a).ToString());
