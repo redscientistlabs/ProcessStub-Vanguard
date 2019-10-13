@@ -417,6 +417,7 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
             var blacklisted = new string[]
             {
                 Environment.GetFolderPath(Environment.SpecialFolder.Windows),
+                "System32"
             };
             if (blacklisted.Any(x => path.Contains(x)))
                 return true;
