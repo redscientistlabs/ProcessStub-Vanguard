@@ -118,14 +118,34 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
                 {
                     try
                     {
+                        foreach (var m in MemoryDomains.MemoryInterfaces.Values) //We don't do selected here as a VMD wouldn't come up in that search
+                        {
+                            if (m.MD is ProcessMemoryDomain pmd)
+                            {
+                                pmd.SetMemoryProtection(ProcessExtensions.MemoryProtection.ExecuteReadWrite);
+                            }
+                        }
+
                         CPU_STEP_Count = 0;
-                        BlastLayer bl = RtcCore.GenerateBlastLayer((string[])AllSpec.UISpec["SELECTEDDOMAINS"]);
+
+                        var selectedDomains = (string[]) AllSpec.UISpec["SELECTEDDOMAINS"];
+                        BlastLayer bl = RtcCore.GenerateBlastLayer(selectedDomains);
                         if (bl != null)
                             bl.Apply(false, false);
                     }
                     catch (Exception ex)
                     {
                         Console.WriteLine($"AutoCorrupt Error!\n{ex.Message}\n{ex.StackTrace}");
+                    }
+                    finally
+                    {
+                        foreach (var m in MemoryDomains.MemoryInterfaces.Values) //We don't do selected here as a VMD wouldn't come up in that search
+                        {
+                            if (m.MD is ProcessMemoryDomain pmd)
+                            {
+                                pmd.ResetMemoryProtection();
+                            }
+                        }
                     }
 
                 }
