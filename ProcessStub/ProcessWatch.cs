@@ -199,19 +199,25 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
 
                 if (UseExceptionHandler)
                 {
-                    ProcessExtensions.IsWow64Process(p.Handle,
-                        out bool is32BitProcess); //This method is stupid and returns the inverse
+                    ProcessExtensions.IsWow64Process(p.Handle, out bool is32BitProcess); //This method is stupid and returns the inverse
                     string path = is32BitProcess
                         ? Path.Combine(currentDir, "ExceptionHandler_x86.dll")
                         : Path.Combine(currentDir, "ExceptionHandler_x64.dll");
                     if (File.Exists(path))
                     {
-                        using (var i = new Injector(InjectionMethod.CreateThread, p.Id, path))
+                        try
                         {
-                            if ((ulong)i.InjectDll() != 0)
+                            using (var i = new Injector(InjectionMethod.CreateThread, p.Id, path))
                             {
-                                Console.WriteLine("Injected exception helper successfully");
+                                if ((ulong) i.InjectDll() != 0)
+                                {
+                                    Console.WriteLine("Injected exception helper successfully");
+                                }
                             }
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine($"Injection failed! {e}");
                         }
                     }
                 }
