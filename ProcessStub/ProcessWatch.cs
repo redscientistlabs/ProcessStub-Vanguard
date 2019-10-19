@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using RTCV.CorruptCore;
 using RTCV.NetCore;
 using RTCV.NetCore.StaticTools;
+using RTCV.ProcessCorrupt;
 using Vanguard;
 
 namespace ProcessStub

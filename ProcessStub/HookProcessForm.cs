@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using RTCV.CorruptCore;
+using RTCV.ProcessCorrupt;
 using RTCV.UI;
 
 namespace ProcessStub

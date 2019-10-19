@@ -149,6 +149,10 @@
       <Project>{364c705e-b7ab-4a94-a59b-88899ce65958}</Project>
       <Name>Vanguard</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ProcessCorrupt\ProcessCorrupt.csproj">
+      <Project>{a1a6429d-f28e-49e2-9b17-2ff83a9170fd}</Project>
+      <Name>ProcessCorrupt</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="ProcessStubIcon.ico" />
