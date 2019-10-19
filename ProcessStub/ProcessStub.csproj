@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{3E02B2BA-0900-4BCF-A416-821C949E6C85}</ProjectGuid>
+    <ProjectGuid>{BFDEF493-3173-4FBC-A789-F208953DF30C}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <RootNamespace>ProcessStub</RootNamespace>
     <AssemblyName>ProcessStub</AssemblyName>
@@ -40,9 +40,6 @@
     <ApplicationIcon>ProcessStubIcon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Bleak, Version=2.5.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Bleak.2.6.3\lib\netstandard2.0\Bleak.dll</HintPath>
-    </Reference>
     <Reference Include="Ceras, Version=4.1.7.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Ceras.4.1.7\lib\net47\Ceras.dll</HintPath>
     </Reference>
