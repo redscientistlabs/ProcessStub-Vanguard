@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Drawing;
+using System.IO;
+using System.IO.Pipes;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using RTCV.NetCore;
 using RTCV.NetCore.StaticTools;
@@ -82,8 +85,25 @@ namespace ProcessStub
             lbTargetStatus.Text = "No target selected";
         }
 
+        struct HeapInfo
+        {
+            public IntPtr Base;
+            public IntPtr Length;
+        }
         private void BtnBrowseTarget_Click(object sender, EventArgs e)
         {
+
+            Task.Run(() =>
+            {
+                var server = new NamedPipeServerStream("processstub", PipeDirection.InOut, 1, PipeTransmissionMode.Byte, PipeOptions.None);
+                server.WaitForConnection();
+                StreamWriter writer = new StreamWriter(server);
+                writer.WriteLine("HEAPQUERY");
+                writer.Flush();
+                var buf = new byte[1024];
+                var a = server.Read(buf, 0, 16);
+                Console.WriteLine(a);
+            });
 
             if (!ProcessWatch.LoadTarget())
                 return;

@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Pipes;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using RTCV.CorruptCore;
 using RTCV.NetCore;
@@ -250,9 +252,6 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
 
                 Action<object, EventArgs> postAction = (ob, ea) =>
                 {
-
-
-
                     if (p == null)
                     {
                         MessageBox.Show("Failed to load target");
@@ -262,7 +261,6 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
 
                     S.GET<StubForm>().lbTarget.Text = p.ProcessName;
                     S.GET<StubForm>().lbTargetStatus.Text = "Hooked!";
-
 
                     //Refresh the UI
                     //RefreshUIPostLoad();
