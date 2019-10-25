@@ -1,7 +1,10 @@
 ﻿using System;
 using System.IO;
+using System.IO.Pipes;
 using System.Reflection;
+using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using ProcessStub;
 using RTCV.CorruptCore;
@@ -195,6 +198,59 @@ namespace Vanguard
             //If it's attached, lie to vanguard
             if (attached)
                 VanguardConnector.ImplyClientConnected();
+
+            Task.Run(() =>
+            {
+                var server = new NamedPipeServerStream("processtub_server", PipeDirection.Out, 1, PipeTransmissionMode.Byte, PipeOptions.None);
+                var client = new NamedPipeClientStream(".", "processstub_client", PipeDirection.In, PipeOptions.None);
+                int uncorruptCount = 0;
+                const int maxUncorrupt = 1;
+                while (true)
+                {
+                    try
+                    {
+                        if (!client.IsConnected)
+                        {
+                            client.Connect(5000);
+                        }
+
+                    }
+                    catch (TimeoutException te)
+                    {
+                        uncorruptCount = 0;
+                        continue;
+                    }
+
+                    try
+                    {
+                        //Get the length of the incoming message
+                        var response = new byte[8];
+                        client.Read(response, 0, response.Length);
+                        var l = BitConverter.ToInt32(response, 0);
+                       // Console.WriteLine(l);
+
+                        //Read the actual message
+                        response = new byte[l];
+                        client.Read(response, 0, response.Length);
+                        var cmd = Encoding.UTF8.GetString(response, 0, response.Length);
+                        //Console.WriteLine(cmd);
+                        switch (cmd)
+                        {
+                            case "UNCORRUPT":
+                                if (uncorruptCount++ >= maxUncorrupt)
+                                    return;
+                                LocalNetCoreRouter.Route(NetcoreCommands.CORRUPTCORE, NetcoreCommands.REMOTE_SET_APPLYUNCORRUPTBL, true);
+                                LocalNetCoreRouter.Route(NetcoreCommands.CORRUPTCORE, NetcoreCommands.REMOTE_CLEARSTEPBLASTUNITS, null, true);
+                                break;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Caught {ex} in client");
+                    }
+                }
+            });
+
         }
     }
 }

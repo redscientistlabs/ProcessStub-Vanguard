@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Bleak;
 using RTCV.CorruptCore;
 using RTCV.NetCore;
 using RTCV.NetCore.StaticTools;
@@ -218,7 +219,7 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
                 }
                 else
                     p = _p;
-                /*
+                
                 if (UseExceptionHandler)
                 {
                     ProcessExtensions.IsWow64Process(p.Handle, out bool is32BitProcess); //This method is stupid and returns the inverse
@@ -242,7 +243,7 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
                             Console.WriteLine($"Injection failed! {e}");
                         }
                     }
-                }*/
+                }
 
                 Action<object, EventArgs> action = (ob, ea) =>
                 {
