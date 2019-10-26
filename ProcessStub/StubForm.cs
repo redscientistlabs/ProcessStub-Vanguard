@@ -138,6 +138,7 @@ namespace ProcessStub
 
                 })).Checked = ProcessWatch.UseFiltering;
 
+                /*
                 ((ToolStripMenuItem)columnsMenu.Items.Add("Use Exception Handler Override", null, (ob, ev) =>
                 {
 
@@ -146,7 +147,7 @@ namespace ProcessStub
 
 
                 })).Checked = ProcessWatch.UseExceptionHandler;
-
+                */
                 ((ToolStripMenuItem)columnsMenu.Items.Add("Use Blacklist", null, (ob, ev) =>
                 {
 

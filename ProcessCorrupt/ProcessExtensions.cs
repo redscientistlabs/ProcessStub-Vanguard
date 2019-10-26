@@ -164,15 +164,21 @@ namespace RTCV.ProcessCorrupt
 
         public static void WriteVirtualMemory(Process p, IntPtr baseAddress, byte[] bytesToWrite)
         {
-            SafeProcessHandle handle = new SafeProcessHandle(p.Handle, false);
             var bytesToWriteBufferHandle = GCHandle.Alloc(bytesToWrite, GCHandleType.Pinned);
-
-            if (!WriteProcessMemory(handle, baseAddress, bytesToWriteBufferHandle.AddrOfPinnedObject(), new IntPtr(bytesToWrite.Length), IntPtr.Zero))
+            try
             {
-                throw new Exception($"Failed to read write a region  of virtual memory in the remote process. Error code: {Marshal.GetLastWin32Error()}");
+                SafeProcessHandle handle = new SafeProcessHandle(p.Handle, false);
+
+                if (!WriteProcessMemory(handle, baseAddress, bytesToWriteBufferHandle.AddrOfPinnedObject(), new IntPtr(bytesToWrite.Length), IntPtr.Zero))
+                {
+                    throw new Exception($"Failed to read write a region  of virtual memory in the remote process. Error code: {Marshal.GetLastWin32Error()}");
+                }
+            }
+            finally
+            {
+                bytesToWriteBufferHandle.Free();
             }
 
-            bytesToWriteBufferHandle.Free();
         }
 
         public static bool VirtualProtectEx(Process p, IntPtr baseAddress, IntPtr dwSize, MemoryProtection protType, out MemoryProtection oldProtType)

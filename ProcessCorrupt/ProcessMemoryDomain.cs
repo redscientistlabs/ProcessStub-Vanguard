@@ -41,7 +41,7 @@ namespace RTCV.ProcessCorrupt
                 var path = ProcessExtensions.GetMappedFileNameW(_p.Handle, baseAddress);
                 if (!String.IsNullOrWhiteSpace(path))
                     path = Path.GetFileName(path);
-                Name = $"{baseAddr.ToString("X8")} : {path}";
+                Name = $"{baseAddr.ToString("X8")} : {size.ToString("X8")} {path}";
             }
             catch (Exception e)
             {

@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("ProcessCorrupt")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("ProcessStub-Vanguard")]
+[assembly: AssemblyDescription("Process Corruption stub for RTCV. https://github.com/NarryG/ProcessStub-Vanguard")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("ProcessCorrupt")]
-[assembly: AssemblyCopyright("Copyright ©  2019")]
+[assembly: AssemblyCompany("Redscientist Media")]
+[assembly: AssemblyProduct("RTCV")]
+[assembly: AssemblyCopyright("Redscientist Media")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
