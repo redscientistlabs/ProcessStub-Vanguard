@@ -85,26 +85,9 @@ namespace Vanguard
                             }
                         }
 
-                        foreach (var m in MemoryDomains.MemoryInterfaces.Values)
-                        {
-                            if (m.MD is ProcessMemoryDomain pmd)
-                            {
-                                pmd.SetMemoryProtection(ProcessExtensions.MemoryProtection.ExecuteReadWrite);
-                            }
-                        }
-
                         break;
 
                     case REMOTE_POSTCORRUPTACTION:
-
-                        foreach (var m in MemoryDomains.MemoryInterfaces.Values)
-                        {
-                            if (m.MD is ProcessMemoryDomain pmd)
-                            {
-                                pmd.ResetMemoryProtection();
-                            }
-                        }
-
                         if (ProcessWatch.SuspendProcess)
                         {
                             if (!ProcessWatch.p?.Resume() ?? true && !suspendWarned)

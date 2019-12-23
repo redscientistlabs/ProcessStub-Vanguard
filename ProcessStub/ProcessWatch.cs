@@ -16,7 +16,7 @@ namespace ProcessStub
 {
     public static class ProcessWatch
     {
-        public static string ProcessStubVersion = "0.0.8";
+        public static string ProcessStubVersion = "0.0.9";
         public static string currentDir = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
         public static Process p;
         public static bool UseFiltering = true;
@@ -59,7 +59,7 @@ namespace ProcessStub
             if (!Directory.Exists(paramsPath))
                 Directory.CreateDirectory(paramsPath);
 
-            if(!Params.IsParamSet("DISCLAIMERREAD"))
+            if (!Params.IsParamSet("DISCLAIMERREAD"))
             {
                 var disclaimer = $@"Welcome to ProcessStub
 Version {ProcessWatch.ProcessStubVersion}
@@ -77,13 +77,13 @@ as the result of use of this software.
 By clicking 'Yes' you agree that you have read this warning in full and are aware of any potential consequences of use of the program. If you do not agree, click 'No' to exit this software.";
                 if (MessageBox.Show(disclaimer, "Process Stub", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
                     Environment.Exit(0);
-                
+
                 Params.SetParam("DISCLAIMERREAD");
             }
 
             var protectionMode = Params.ReadParam("PROTECTIONMODE");
             if (protectionMode != null)
-                ProtectMode = (ProcessExtensions.MemoryProtection)Enum.Parse(typeof(ProcessExtensions.MemoryProtection), protectionMode);
+                ProtectMode = (ProcessExtensions.MemoryProtection) Enum.Parse(typeof(ProcessExtensions.MemoryProtection), protectionMode);
 
 
             UseExceptionHandler = Params.ReadParam("USEEXCEPTIONHANDLER") == "True";
@@ -104,54 +104,58 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
 
                 try
                 {
-                    StepActions.Execute();
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Corrupt Error!\n{ex.Message}\n{ex.StackTrace}");
-                }
+                    foreach (var m in MemoryDomains.MemoryInterfaces.Values)
+                    {
+                        if (m.MD is ProcessMemoryDomain pmd)
+                        {
+                            pmd.SetMemoryProtection(ProcessExtensions.MemoryProtection.ExecuteReadWrite);
+                        }
+                    }
 
-                CPU_STEP_Count++;
-                bool autoCorrupt = RtcCore.AutoCorrupt;
-                long errorDelay = RtcCore.ErrorDelay;
-                if (autoCorrupt && CPU_STEP_Count >= errorDelay)
-                {
                     try
                     {
-                        foreach (var m in MemoryDomains.MemoryInterfaces.Values) //We don't do selected here as a VMD wouldn't come up in that search
-                        {
-                            if (m.MD is ProcessMemoryDomain pmd)
-                            {
-                                pmd.SetMemoryProtection(ProcessExtensions.MemoryProtection.ExecuteReadWrite);
-                            }
-                        }
-
-                        CPU_STEP_Count = 0;
-
-                        var selectedDomains = (string[]) AllSpec.UISpec["SELECTEDDOMAINS"];
-                        BlastLayer bl = RtcCore.GenerateBlastLayer(selectedDomains);
-                        if (bl != null)
-                            bl.Apply(false, false);
+                        StepActions.Execute();
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine($"AutoCorrupt Error!\n{ex.Message}\n{ex.StackTrace}");
+                        Console.WriteLine($"Corrupt Error!\n{ex.Message}\n{ex.StackTrace}");
                     }
-                    finally
+
+                    CPU_STEP_Count++;
+                    bool autoCorrupt = RtcCore.AutoCorrupt;
+                    long errorDelay = RtcCore.ErrorDelay;
+                    if (autoCorrupt && CPU_STEP_Count >= errorDelay)
                     {
-                        foreach (var m in MemoryDomains.MemoryInterfaces.Values) //We don't do selected here as a VMD wouldn't come up in that search
+                        try
                         {
-                            if (m.MD is ProcessMemoryDomain pmd)
-                            {
-                                pmd.ResetMemoryProtection();
-                            }
+
+                            CPU_STEP_Count = 0;
+
+                            var selectedDomains = (string[]) AllSpec.UISpec["SELECTEDDOMAINS"];
+                            BlastLayer bl = RtcCore.GenerateBlastLayer(selectedDomains);
+                            if (bl != null)
+                                bl.Apply(false, false);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"AutoCorrupt Error!\n{ex.Message}\n{ex.StackTrace}");
                         }
                     }
-
+                }
+                finally
+                {
+                    foreach (var m in MemoryDomains.MemoryInterfaces.Values)
+                    {
+                        if (m.MD is ProcessMemoryDomain pmd)
+                        {
+                            pmd.ResetMemoryProtection();
+                        }
+                    }
                 }
 
-                AutoCorruptTimer.Start();
             }
+
+            AutoCorruptTimer.Start();
         }
 
         private static void AutoHookTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
@@ -356,7 +360,7 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
                         var filters = S.GET<StubForm>().tbFilterText.Text.Split('\n').Select(x => x.Trim()).ToArray();
                         if (mbi.State == (uint)ProcessExtensions.MemoryType.MEM_COMMIT)
                         {
-                            if (((mbi.Protect & ProtectMode) != 0))
+                            if (((mbi.Protect | ProtectMode) == ProtectMode))
                             {
                                 if (!UseFiltering || filters.Any(x => name.ToUpper().Contains(x.ToUpper())))
                                 {
