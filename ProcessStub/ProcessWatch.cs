@@ -27,8 +27,8 @@ namespace ProcessStub
         static int CPU_STEP_Count = 0;
 
         public static ProgressForm progressForm;
-        public static System.Timers.Timer AutoHookTimer;
-        public static System.Timers.Timer AutoCorruptTimer;
+        public static volatile System.Timers.Timer AutoHookTimer;
+        public static volatile System.Timers.Timer AutoCorruptTimer;
         public static ImageList ProcessIcons = new ImageList();
 
         public static ProcessExtensions.MemoryProtection ProtectMode = ProcessExtensions.MemoryProtection.ReadWrite;
@@ -41,6 +41,7 @@ namespace ProcessStub
 
             AutoCorruptTimer = new System.Timers.Timer();
             AutoCorruptTimer.Interval = 16;
+            AutoCorruptTimer.AutoReset = false;
             AutoCorruptTimer.Elapsed += CorruptTimer_Elapsed;
             AutoCorruptTimer.Start();
 
