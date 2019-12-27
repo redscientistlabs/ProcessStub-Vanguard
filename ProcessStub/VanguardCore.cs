@@ -20,7 +20,7 @@ namespace Vanguard
 
         public static string emuDir = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
         public static string logPath = Path.Combine(emuDir, "EMU_LOG.txt");
-        public static bool vanguardConnected => VanguardImplementation.connector != null ? VanguardImplementation.connector.netcoreStatus == NetworkStatus.CONNECTED : false;
+        public static bool vanguardConnected => VanguardImplementation.connector != null && VanguardImplementation.connector.netcoreStatus == NetworkStatus.CONNECTED;
 
         public static string System
         {
