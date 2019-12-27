@@ -14,7 +14,7 @@ namespace RTCV.ProcessCorrupt
         public long Size { get; }
         IntPtr baseAddr { get; }
         public int WordSize => 4;
-        private ProcessExtensions.MemoryProtection mp;
+        private ProcessExtensions.MemoryProtection mp = ProcessExtensions.MemoryProtection.NoAccess;
         private Process p;
     
         private int errCount = 0;
@@ -56,12 +56,17 @@ namespace RTCV.ProcessCorrupt
                 return;
             try
             {
-                ProcessExtensions.WriteVirtualMemory(p, (IntPtr)((long)baseAddr + address), new[] { data });
+                if(SetMemoryProtection(ProcessExtensions.MemoryProtection.ExecuteReadWrite))
+                    ProcessExtensions.WriteVirtualMemory(p, (IntPtr)((long)baseAddr + address), new[] { data });
             }
             catch (Exception e)
             {
                 Console.WriteLine($"ProcessInterface PokeByte failed!\n{e.Message}\n{e.StackTrace}");
                 errCount++;
+            }
+            finally
+            {
+                ResetMemoryProtection();
             }
         }
     
@@ -71,12 +76,17 @@ namespace RTCV.ProcessCorrupt
                 return 0;
             try
             {
-                return ProcessExtensions.ReadVirtualMemory(p, (IntPtr)((long)baseAddr + address), 1)[0];
+                if (SetMemoryProtection(ProcessExtensions.MemoryProtection.ExecuteReadWrite))
+                    return ProcessExtensions.ReadVirtualMemory(p, (IntPtr) ((long) baseAddr + address), 1)[0];
             }
             catch (Exception e)
             {
                 Console.WriteLine($"ProcessInterface PeekByte failed!\n{e.Message}\n{e.StackTrace}");
                 errCount++;
+            }
+            finally
+            {
+                ResetMemoryProtection();
             }
             return 0;
         }
@@ -86,12 +96,17 @@ namespace RTCV.ProcessCorrupt
                 return null;
             try
             {
-                return ProcessExtensions.ReadVirtualMemory(p, (IntPtr)((long)baseAddr + address), length);
+                if(SetMemoryProtection(ProcessExtensions.MemoryProtection.ExecuteReadWrite))
+                    return ProcessExtensions.ReadVirtualMemory(p, (IntPtr) ((long) baseAddr + address), length);
             }
             catch (Exception e)
             {
                 Console.WriteLine($"ProcessInterface PeekBytes failed!\n{e.Message}");
                 errCount++;
+            }
+            finally
+            {
+                ResetMemoryProtection();
             }
             return null;
         }
@@ -100,13 +115,14 @@ namespace RTCV.ProcessCorrupt
             throw new NotImplementedException();
         }
     
-        public void SetMemoryProtection(ProcessExtensions.MemoryProtection memoryProtection)
+        public bool SetMemoryProtection(ProcessExtensions.MemoryProtection memoryProtection)
         {
-            ProcessExtensions.VirtualProtectEx(p, baseAddr, (IntPtr)Size, memoryProtection, out mp);
+            var r = ProcessExtensions.VirtualProtectEx(p, baseAddr, (IntPtr)Size, memoryProtection, out mp);
+            return r;
         }
-        public void ResetMemoryProtection()
+        public bool ResetMemoryProtection()
         {
-            ProcessExtensions.VirtualProtectEx(p, baseAddr, (IntPtr)Size, mp, out _);
+            return ProcessExtensions.VirtualProtectEx(p, baseAddr, (IntPtr)Size, mp, out _);
         }
     }
 }

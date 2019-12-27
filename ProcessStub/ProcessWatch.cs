@@ -105,55 +105,33 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
 
                 try
                 {
-                    foreach (var m in MemoryDomains.MemoryInterfaces.Values)
-                    {
-                        if (m.MD is ProcessMemoryDomain pmd)
-                        {
-                            pmd.SetMemoryProtection(ProcessExtensions.MemoryProtection.ExecuteReadWrite);
-                        }
-                    }
+                    StepActions.Execute();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Corrupt Error!\n{ex.Message}\n{ex.StackTrace}");
+                }
 
+                CPU_STEP_Count++;
+                bool autoCorrupt = RtcCore.AutoCorrupt;
+                long errorDelay = RtcCore.ErrorDelay;
+                if (autoCorrupt && CPU_STEP_Count >= errorDelay)
+                {
                     try
                     {
-                        StepActions.Execute();
+
+                        CPU_STEP_Count = 0;
+
+                        var selectedDomains = (string[]) AllSpec.UISpec["SELECTEDDOMAINS"];
+                        BlastLayer bl = RtcCore.GenerateBlastLayer(selectedDomains);
+                        if (bl != null)
+                            bl.Apply(false, false);
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine($"Corrupt Error!\n{ex.Message}\n{ex.StackTrace}");
-                    }
-
-                    CPU_STEP_Count++;
-                    bool autoCorrupt = RtcCore.AutoCorrupt;
-                    long errorDelay = RtcCore.ErrorDelay;
-                    if (autoCorrupt && CPU_STEP_Count >= errorDelay)
-                    {
-                        try
-                        {
-
-                            CPU_STEP_Count = 0;
-
-                            var selectedDomains = (string[]) AllSpec.UISpec["SELECTEDDOMAINS"];
-                            BlastLayer bl = RtcCore.GenerateBlastLayer(selectedDomains);
-                            if (bl != null)
-                                bl.Apply(false, false);
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine($"AutoCorrupt Error!\n{ex.Message}\n{ex.StackTrace}");
-                        }
+                        Console.WriteLine($"AutoCorrupt Error!\n{ex.Message}\n{ex.StackTrace}");
                     }
                 }
-                finally
-                {
-                    foreach (var m in MemoryDomains.MemoryInterfaces.Values)
-                    {
-                        if (m.MD is ProcessMemoryDomain pmd)
-                        {
-                            pmd.ResetMemoryProtection();
-                        }
-                    }
-                }
-
             }
 
             AutoCorruptTimer.Start();

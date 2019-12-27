@@ -7,6 +7,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Win32.SafeHandles;
+using static RTCV.ProcessCorrupt.NativeTypes;
 
 namespace RTCV.ProcessCorrupt
 {
@@ -23,6 +24,28 @@ namespace RTCV.ProcessCorrupt
             MEM_LARGE_PAGES = 0x20000000,
             MEM_PHYSICAL = 0x00400000,
             MEM_TOP_DOWN = 0x00100000,
+        }
+        public enum MEMORY_REGION_TYPE
+        {
+            UnknownRegion,
+            CustomRegion,
+            UnusableRegion,
+            MappedFileRegion,
+            UserSharedDataRegion,
+            PebRegion,
+            Peb32Region,
+            TebRegion,
+            Teb32Region, // Not used
+            StackRegion,
+            Stack32Region,
+            HeapRegion,
+            Heap32Region,
+            HeapSegmentRegion,
+            HeapSegment32Region,
+            CfgBitmapRegion,
+            CfgBitmap32Region,
+            ApiSetMapRegion,
+            HypervisorSharedDataRegion,
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -129,9 +152,20 @@ namespace RTCV.ProcessCorrupt
         [DllImport("kernel32.dll", SetLastError = true)]
         public static extern IntPtr OpenProcess(int dwDesiredAccess, bool bInheritHandle, int dwProcessId);
         [DllImport("Kernel32.dll")]
-        private static extern uint QueryFullProcessImageName([In] IntPtr hProcess, [In] uint dwFlags, [Out] StringBuilder lpExeName, [In, Out] ref uint lpdwSize);
+        private static extern NtStatus QueryFullProcessImageName([In] IntPtr hProcess, [In] uint dwFlags, [Out] StringBuilder lpExeName, [In, Out] ref uint lpdwSize);[DllImport("NTDLL.DLL", SetLastError = true)]
+        private static extern NtStatus NtQueryInformationProcess(IntPtr hProcess, PROCESS_INFORMATION_CLASS pic, ref PROCESS_BASIC_INFORMATION pbi, int cb, out int pSize);
+        /// <summary>Retrieves the specified system information.</summary>
+        /// <param name="InfoClass">indicate the kind of system information to be retrieved</param>
+        /// <param name="Info">a buffer that receives the requested information</param>
+        /// <param name="Size">The allocation size of the buffer pointed to by Info</param>
+        /// <param name="Length">If null, ignored.  Otherwise tells you the size of the information returned by the kernel.</param>
+        /// <returns>Status Information</returns>
+        /// http://msdn.microsoft.com/en-us/library/windows/desktop/ms724509%28v=vs.85%29.aspx
+        [DllImport("ntdll.dll")]
+        public static extern NtStatus NtQuerySystemInformation([In]SYSTEM_INFORMATION_CLASS SystemInformationClass, [Out]IntPtr SystemInformation, [In]uint SystemInformationLength, [Out]out IntPtr ReturnLength);
 
-
+        [DllImport("ntdll.dll")]
+        private static extern NtStatus NtQuerySystemInformationEx([In]SYSTEM_INFORMATION_CLASS SystemInformationClass, [In]IntPtr InputBuffer, [In]uint InputBufferLength, [Out]IntPtr SystemInformation, [In]uint SystemInformationLength, [Out]out IntPtr ReturnLength);
 
         public static bool VirtualQueryEx(Process p, IntPtr baseAddress, out MemoryBasicInformation memoryBasicInformation)
         {
@@ -304,5 +338,83 @@ namespace RTCV.ProcessCorrupt
             return success;
 
         }
+
+
+        /*
+        public static  NtStatus EnumProcessEx(out IntPtr processes, SYSTEM_INFORMATION_CLASS sic)
+        {
+            SYSTEM_PROCESS_INFORMATION pi;
+            NtStatus status;
+
+            uint bufferSize = sizeof(SYSTEM_INFORMATION_CLASS);
+            var infoPtr = Marshal.AllocHGlobal((int)sic);
+
+            while (true)
+            {
+                status = (NtStatus)NtQuerySystemInformation(sic, infoPtr, bufferSize, out IntPtr returnSize);
+                if (status == NtStatus.BufferTooSmall || status == NtStatus.InfoLengthMismatch)
+                {
+                    Marshal.FreeHGlobal(infoPtr);
+                    infoPtr = Marshal.AllocHGlobal(returnSize);
+                }
+                else
+                    break;
+            }
+
+            if (status != NtStatus.Success)
+            {
+                Marshal.FreeHGlobal(infoPtr);
+                Console.WriteLine($"Whoops {status}");
+                processes = (IntPtr)0;
+                return status;
+            }
+            processes = infoPtr;
+
+            return status;
+        }
+        public static SYSTEM_PROCESS_INFORMATION FindProcessInformation(IntPtr Processes, int ProcessId)
+        {
+            SYSTEM_PROCESS_INFORMATION process = (SYSTEM_PROCESS_INFORMATION)Marshal.PtrToStructure(Processes, typeof(SYSTEM_PROCESS_INFORMATION));
+            return process;
+        }
+
+        public static bool EnumProcessss(Process p, out NativeTypes.SYSTEM_EXTENDED_PROCESS_INFORMATION epi)
+        {
+            var handle = p.Handle;
+            p.Suspend();
+
+            SYSTEM_INFORMATION_CLASS sic = new SYSTEM_INFORMATION_CLASS();
+
+            if (EnumProcessEx(out IntPtr process, sic) == NtStatus.Success)
+            {
+                var spi = FindProcessInformation(process, p.Id);
+
+                PROCESS_BASIC_INFORMATION basicInfo = new PROCESS_BASIC_INFORMATION();
+                uint numberOfHeaps;
+                IntPtr processHeapsPtr;
+                IntPtr processHeaps;
+                IntPtr apiSetMap;
+                uint i;
+                IntPtr peb32;
+                uint processHeapsPtr32;
+                IntPtr processHeaps32;
+                uint apiSetMap32;
+
+                if (NtQueryInformationProcess((IntPtr) p.Id, PROCESS_INFORMATION_CLASS.ProcessBasicInformation, ref basicInfo, System.Runtime.InteropServices.Marshal.SizeOf(typeof(PROCESS_BASIC_INFORMATION)), out _) == NtStatus.Success)
+                {
+
+                    if (ReadVirtualMemory(p, (basicInfo.PebBaseAddress + Marshal.OffsetOf(TYPE, FIELD_NAME)))
+                }
+
+
+                foreach (ProcessThread thread in p.Threads)
+                {
+                    //result = (uint)NtQuerySystemInformationEx(sic, infoPtr, result, out IntPtr returnSize);
+
+                }
+
+                if (NtQueryInformationProcess(handle,))
+            }
+        }*/
     }
 }
