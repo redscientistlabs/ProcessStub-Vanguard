@@ -23,7 +23,7 @@ namespace ProcessStub
         private void MemoryProtectionSelector_Load(object sender, EventArgs e)
         {
             tablePanel.Controls.Clear();
-            foreach (var t in Enum.GetNames(typeof(ProcessExtensions.MemoryProtection)).Where(x => x != ProcessExtensions.MemoryProtection.NoAccess.ToString()))
+            foreach (var t in Enum.GetNames(typeof(ProcessExtensions.MemoryProtection)).Where(x => x != ProcessExtensions.MemoryProtection.NoAccess.ToString() && x != ProcessExtensions.MemoryProtection.ZeroAccess.ToString() && x != ProcessExtensions.MemoryProtection.Empty.ToString()))
             {
                 CheckBox cb = new CheckBox
                 {
@@ -46,8 +46,9 @@ namespace ProcessStub
 				return;
             }
 
-            ProcessExtensions.MemoryProtection a = ProcessExtensions.MemoryProtection.NoAccess;
-            foreach (CheckBox cb in tablePanel.Controls.Cast<CheckBox>().Where(item => item.Checked)) a = a | (ProcessExtensions.MemoryProtection) Enum.Parse(typeof(ProcessExtensions.MemoryProtection), cb.Text);
+            ProcessExtensions.MemoryProtection a = ProcessExtensions.MemoryProtection.ZeroAccess;
+            foreach (CheckBox cb in tablePanel.Controls.Cast<CheckBox>().Where(item => item.Checked)) 
+                a = a | (ProcessExtensions.MemoryProtection)Enum.Parse(typeof(ProcessExtensions.MemoryProtection), cb.Text);
 
             ProcessWatch.ProtectMode = a;
             Params.SetParam("PROTECTIONMODE", ((uint)a).ToString());

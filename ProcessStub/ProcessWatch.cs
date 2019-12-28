@@ -83,9 +83,16 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
             }
 
             var protectionMode = Params.ReadParam("PROTECTIONMODE");
-            if (protectionMode != null)
-                ProtectMode = (ProcessExtensions.MemoryProtection) Enum.Parse(typeof(ProcessExtensions.MemoryProtection), protectionMode);
-
+            try
+            {
+                if (protectionMode != null)
+                    ProtectMode = (ProcessExtensions.MemoryProtection) Enum.Parse(typeof(ProcessExtensions.MemoryProtection), protectionMode);
+            }
+            catch (Exception e)
+            {
+                Params.RemoveParam("PROTECTIONMODE");
+                ProtectMode = ProcessExtensions.MemoryProtection.ReadWrite;
+            }
 
             UseExceptionHandler = Params.ReadParam("USEEXCEPTIONHANDLER") == "True";
             UseBlacklist = Params.ReadParam("USEBLACKLIST") != "False";
@@ -97,7 +104,7 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
         {
             lock (CorruptLock)
             {
-                if (!VanguardCore.vanguardConnected || AllSpec.CorruptCoreSpec == null)
+                if (!VanguardCore.vanguardConnected || AllSpec.CorruptCoreSpec == null || (p?.HasExited ?? true))
                 {
                     AutoCorruptTimer.Start();
                     return;
@@ -105,11 +112,15 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
 
                 try
                 {
-                    foreach (var m in MemoryDomains.MemoryInterfaces.Values)
+                    foreach (var m in MemoryDomains.MemoryInterfaces?.Values ?? Enumerable.Empty<MemoryDomainProxy>())
                     {
                         if (m.MD is ProcessMemoryDomain pmd)
                         {
                             pmd.SetMemoryProtection(ProcessExtensions.MemoryProtection.ExecuteReadWrite);
+                            if (p?.HasExited ?? false)
+                            {
+                                Console.WriteLine($"Bad! {pmd.Name}");
+                            }
                         }
                     }
 
@@ -136,6 +147,11 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
                             BlastLayer bl = RtcCore.GenerateBlastLayer(selectedDomains);
                             if (bl != null)
                                 bl.Apply(false, false);
+
+                            if (p?.HasExited ?? false)
+                            {
+                                Console.WriteLine($"Bad2!");
+                            }
                         }
                         catch (Exception ex)
                         {
@@ -145,17 +161,26 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
                 }
                 finally
                 {
-                    foreach (var m in MemoryDomains.MemoryInterfaces.Values)
+                    foreach (var m in MemoryDomains.MemoryInterfaces?.Values ?? Enumerable.Empty<MemoryDomainProxy>())
                     {
                         if (m.MD is ProcessMemoryDomain pmd)
                         {
                             pmd.ResetMemoryProtection();
+                        }
+
+                        if (p?.HasExited ?? false)
+                        {
+                            Console.WriteLine($"Bad3!");
                         }
                     }
                 }
 
             }
 
+            if (p.HasExited)
+            {
+                Console.WriteLine($"Bad4!");
+            }
             AutoCorruptTimer.Start();
         }
 
@@ -339,43 +364,53 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
 
                 List<MemoryDomainProxy> interfaces = new List<MemoryDomainProxy>();
 
-                IntPtr addr = new IntPtr(0L);
                 var _p = ProcessExtensions.GetProcessSafe(p);
                 if (IsProcessBlacklisted(_p))
                     return new MemoryDomainProxy[] { };
-                while (true)
+
+
+                ProcessExtensions.GetSystemInfo(out var info);
+                IntPtr minAddr = info.minimumApplicationAddress;
+                IntPtr maxAddr = info.maximumApplicationAddress;
+                long minAddr_l = (long)info.minimumApplicationAddress;
+                long maxAddr_l = (long)info.maximumApplicationAddress;
+                while (minAddr_l < maxAddr_l)
                 {
                     _p = ProcessExtensions.GetProcessSafe(p);
                     if (_p == null)
                         return new MemoryDomainProxy[] { };
 
 
-                    if (ProcessExtensions.VirtualQueryEx(_p, addr, out var mbi) == false)
+                    if (ProcessExtensions.VirtualQueryEx(_p, minAddr, out var mbi) == false)
                     {
                         break;
                     }
 
-                    var name = ProcessExtensions.GetMappedFileNameW(_p.Handle, mbi.BaseAddress);
-                    if (String.IsNullOrWhiteSpace(name) || !IsPathBlacklisted(name))
+                    if (mbi.State == (uint)ProcessExtensions.MemoryType.MEM_COMMIT && 
+                        mbi.Protect != ProcessExtensions.MemoryProtection.NoAccess && //Hard blacklist
+                        mbi.Protect != ProcessExtensions.MemoryProtection.ZeroAccess && //Hard blacklist
+                        (mbi.Protect | ProtectMode) == ProtectMode)
                     {
-                        var filters = S.GET<StubForm>().tbFilterText.Text.Split('\n').Select(x => x.Trim()).ToArray();
-                        if (mbi.State == (uint)ProcessExtensions.MemoryType.MEM_COMMIT)
+                        var name = ProcessExtensions.GetMappedFileNameW(_p.Handle, mbi.BaseAddress);
+                        if (String.IsNullOrWhiteSpace(name) || !IsPathBlacklisted(name))
                         {
-                            if (((mbi.Protect | ProtectMode) == ProtectMode))
+                            if (String.IsNullOrWhiteSpace(name))
+                                name = "UNKNOWN";
+                            var filters = S.GET<StubForm>().tbFilterText.Text.Split('\n').Select(x => x.Trim()).ToArray();
+                            if (!UseFiltering || filters.Any(x => name.ToUpper().Contains(x.ToUpper())))
                             {
-                                if (!UseFiltering || filters.Any(x => name.ToUpper().Contains(x.ToUpper())))
-                                {
-                                    if (!String.IsNullOrWhiteSpace(name))
-                                        Console.WriteLine($"Adding mbi {name.Split('\\').Last()}  {mbi.Protect} {ProtectMode}");
-                                    ProcessMemoryDomain pmd = new ProcessMemoryDomain(_p, mbi.BaseAddress, (long)mbi.RegionSize);
-                                    interfaces.Add(new MemoryDomainProxy(pmd));
-                                }
+                                Console.WriteLine($"Adding mbi {name.Split('\\').Last()}  {mbi.Protect} | {ProtectMode}");
+                                ProcessMemoryDomain pmd = new ProcessMemoryDomain(_p, mbi.BaseAddress, (long)mbi.RegionSize);
+                                interfaces.Add(new MemoryDomainProxy(pmd));
                             }
                         }
                     }
-                    addr = new IntPtr((long)mbi.BaseAddress + (long)mbi.RegionSize);
+                    minAddr_l += (long)mbi.RegionSize;
+                    minAddr = (IntPtr)minAddr_l;
                 }
 
+                Console.WriteLine("Done adding domains");
+                Thread.Sleep(1000);
                 return interfaces.ToArray();
             }
             catch (Exception ex)

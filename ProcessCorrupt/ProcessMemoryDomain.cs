@@ -12,9 +12,9 @@ namespace RTCV.ProcessCorrupt
         public string Name { get; }
         public bool BigEndian => false;
         public long Size { get; }
-        IntPtr baseAddr { get; }
+        private IntPtr baseAddr { get; }
         public int WordSize => 4;
-        private ProcessExtensions.MemoryProtection mp;
+        private ProcessExtensions.MemoryProtection mp = ProcessExtensions.MemoryProtection.Empty;
         private Process p;
     
         private int errCount = 0;
@@ -41,6 +41,8 @@ namespace RTCV.ProcessCorrupt
                 var path = ProcessExtensions.GetMappedFileNameW(_p.Handle, baseAddress);
                 if (!String.IsNullOrWhiteSpace(path))
                     path = Path.GetFileName(path);
+                else
+                    path = "UNKNOWN";
                 Name = $"{baseAddr.ToString("X8")} : {size.ToString("X8")} {path}";
             }
             catch (Exception e)
@@ -100,13 +102,23 @@ namespace RTCV.ProcessCorrupt
             throw new NotImplementedException();
         }
     
-        public void SetMemoryProtection(ProcessExtensions.MemoryProtection memoryProtection)
+        public bool SetMemoryProtection(ProcessExtensions.MemoryProtection memoryProtection)
         {
-            ProcessExtensions.VirtualProtectEx(p, baseAddr, (IntPtr)Size, memoryProtection, out mp);
+            var result = ProcessExtensions.VirtualProtectEx(p, baseAddr, (IntPtr)Size, memoryProtection, out var _mp);
+            if (result)
+                mp = _mp;
+            return result;
         }
-        public void ResetMemoryProtection()
+        public bool ResetMemoryProtection()
         {
-            ProcessExtensions.VirtualProtectEx(p, baseAddr, (IntPtr)Size, mp, out _);
+            if(mp != ProcessExtensions.MemoryProtection.Empty)
+                return ProcessExtensions.VirtualProtectEx(p, baseAddr, (IntPtr)Size, mp, out _);
+            return false;
+        }
+
+        public void FlushInstructionCache()
+        {
+            ProcessExtensions.FlushInstructionCache(p.Handle, baseAddr, (UIntPtr) Size);
         }
     }
 }
