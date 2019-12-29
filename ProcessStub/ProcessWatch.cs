@@ -16,13 +16,14 @@ namespace ProcessStub
 {
     public static class ProcessWatch
     {
-        public static string ProcessStubVersion = "0.1.0";
+        public static string ProcessStubVersion = "0.1.1";
         public static string currentDir = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
         public static Process p;
         public static bool UseFiltering = true;
         public static bool UseExceptionHandler = false;
         public static bool UseBlacklist = true;
         public static bool SuspendProcess = false;
+        public static bool DontChangeMemoryProtection = false;
         public static Object CorruptLock = new object();
         static int CPU_STEP_Count = 0;
 
@@ -30,6 +31,7 @@ namespace ProcessStub
         public static volatile System.Timers.Timer AutoHookTimer;
         public static volatile System.Timers.Timer AutoCorruptTimer;
         public static ImageList ProcessIcons = new ImageList();
+        
 
         public static ProcessExtensions.MemoryProtection ProtectMode = ProcessExtensions.MemoryProtection.ReadWrite;
 
@@ -112,14 +114,17 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
 
                 try
                 {
-                    foreach (var m in MemoryDomains.MemoryInterfaces?.Values ?? Enumerable.Empty<MemoryDomainProxy>())
+                    if (!DontChangeMemoryProtection)
                     {
-                        if (m.MD is ProcessMemoryDomain pmd)
+                        foreach (var m in MemoryDomains.MemoryInterfaces?.Values ?? Enumerable.Empty<MemoryDomainProxy>())
                         {
-                            pmd.SetMemoryProtection(ProcessExtensions.MemoryProtection.ExecuteReadWrite);
-                            if (p?.HasExited ?? false)
+                            if (m.MD is ProcessMemoryDomain pmd)
                             {
-                                Console.WriteLine($"Bad! {pmd.Name}");
+                                pmd.SetMemoryProtection(ProcessExtensions.MemoryProtection.ExecuteReadWrite);
+                                if (p?.HasExited ?? false)
+                                {
+                                    Console.WriteLine($"Bad! {pmd.Name}");
+                                }
                             }
                         }
                     }
@@ -161,16 +166,20 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
                 }
                 finally
                 {
-                    foreach (var m in MemoryDomains.MemoryInterfaces?.Values ?? Enumerable.Empty<MemoryDomainProxy>())
+                    if (!DontChangeMemoryProtection)
                     {
-                        if (m.MD is ProcessMemoryDomain pmd)
+                        foreach (var m in MemoryDomains.MemoryInterfaces?.Values ?? Enumerable.Empty<MemoryDomainProxy>())
                         {
-                            pmd.ResetMemoryProtection();
-                        }
+                            if (m.MD is ProcessMemoryDomain pmd)
+                            {
+                                pmd.ResetMemoryProtection();
+                                pmd.FlushInstructionCache();
+                            }
 
-                        if (p?.HasExited ?? false)
-                        {
-                            Console.WriteLine($"Bad3!");
+                            if (p?.HasExited ?? false)
+                            {
+                                Console.WriteLine($"Bad3!");
+                            }
                         }
                     }
                 }

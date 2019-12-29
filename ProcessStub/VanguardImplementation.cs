@@ -78,54 +78,62 @@ namespace Vanguard
 
                     case REMOTE_PRECORRUPTACTION:
 
-                        lock (ProcessWatch.CorruptLock)
+                        SyncObjectSingleton.FormExecute(() =>
                         {
-                            if (ProcessWatch.SuspendProcess)
+                            lock (ProcessWatch.CorruptLock)
                             {
-                                if (!ProcessWatch.p?.Suspend() ?? true && !suspendWarned)
-                                {
-                                    suspendWarned = (MessageBox.Show("Failed to suspend a thread!\nWould you like to continue to receive warnings?", "Failed to suspend thread", MessageBoxButtons.YesNo, MessageBoxIcon.Error) == DialogResult.Yes);
-                                }
-                            }
 
-                            var count = 0;
-                            foreach (var m in MemoryDomains.MemoryInterfaces.Values)
-                            {
-                                if (m.MD is ProcessMemoryDomain pmd)
+                                if (ProcessWatch.SuspendProcess)
                                 {
-                                    if (!pmd.SetMemoryProtection(ProcessExtensions.MemoryProtection.ExecuteReadWrite))
-                                        count++;
+                                    if (!ProcessWatch.p?.Suspend() ?? true && !suspendWarned)
+                                    {
+                                        suspendWarned = (MessageBox.Show("Failed to suspend a thread!\nWould you like to continue to receive warnings?", "Failed to suspend thread", MessageBoxButtons.YesNo, MessageBoxIcon.Error) == DialogResult.Yes);
+                                    }
                                 }
+
+                                ProcessWatch.DontChangeMemoryProtection = true;
+                                var count = 0;
+                                foreach (var m in MemoryDomains.MemoryInterfaces.Values)
+                                {
+                                    if (m.MD is ProcessMemoryDomain pmd)
+                                    {
+                                        if (!pmd.SetMemoryProtection(ProcessExtensions.MemoryProtection.ExecuteReadWrite))
+                                            count++;
+                                    }
+                                }
+
+                                Console.WriteLine($"PreCorrupt\n" +
+                                                  $"Total domains: {MemoryDomains.MemoryInterfaces.Values.Count}\n" +
+                                                  $"Errors: {count}");
                             }
-                            Console.WriteLine($"PreCorrupt\n" +
-                                              $"Total domains: {MemoryDomains.MemoryInterfaces.Values.Count}\n" +
-                                              $"Errors: {count}");
-                        }
+                        });
 
                         break;
 
                     case REMOTE_POSTCORRUPTACTION:
-
-                        lock (ProcessWatch.CorruptLock)
+                        SyncObjectSingleton.FormExecute(() =>
                         {
-                            foreach (var m in MemoryDomains.MemoryInterfaces.Values)
+                            lock (ProcessWatch.CorruptLock)
                             {
-                                if (m.MD is ProcessMemoryDomain pmd)
+                                foreach (var m in MemoryDomains.MemoryInterfaces.Values)
                                 {
-                                    pmd.ResetMemoryProtection();
-                                    pmd.FlushInstructionCache();
+                                    if (m.MD is ProcessMemoryDomain pmd)
+                                    {
+                                        pmd.ResetMemoryProtection();
+                                        pmd.FlushInstructionCache();
+                                    }
                                 }
-                            }
-
-                            if (ProcessWatch.SuspendProcess)
-                            {
-                                if (!ProcessWatch.p?.Resume() ?? true && !suspendWarned)
+                                ProcessWatch.DontChangeMemoryProtection = false;
+                                if (ProcessWatch.SuspendProcess)
                                 {
-                                    suspendWarned = (MessageBox.Show("Failed to resume a thread!\nWould you like to continue to receive warnings?", "Failed to resume thread", MessageBoxButtons.YesNo, MessageBoxIcon.Error) == DialogResult.Yes);
+                                    if (!ProcessWatch.p?.Resume() ?? true && !suspendWarned)
+                                    {
+                                        suspendWarned = (MessageBox.Show("Failed to resume a thread!\nWould you like to continue to receive warnings?", "Failed to resume thread", MessageBoxButtons.YesNo, MessageBoxIcon.Error) == DialogResult.Yes);
+                                    }
                                 }
-                            }
 
-                        }
+                            }
+                        });
                         break;
 
                     case REMOTE_CLOSEGAME:
