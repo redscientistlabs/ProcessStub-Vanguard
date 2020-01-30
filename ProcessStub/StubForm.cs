@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 using RTCV.NetCore;
-using RTCV.NetCore.StaticTools;
+using RTCV.Common;
 using RTCV.UI;
 using Vanguard;
 

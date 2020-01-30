@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Windows.Forms;
 using RTCV.NetCore;
-using RTCV.NetCore.StaticTools;
+using RTCV.Common;
 
 namespace ProcessStub
 {

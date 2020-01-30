@@ -8,7 +8,7 @@ using System.Threading;
 using System.Windows.Forms;
 using RTCV.CorruptCore;
 using RTCV.NetCore;
-using RTCV.NetCore.StaticTools;
+using RTCV.Common;
 using RTCV.ProcessCorrupt;
 using Vanguard;
 
@@ -16,7 +16,7 @@ namespace ProcessStub
 {
     public static class ProcessWatch
     {
-        public static string ProcessStubVersion = "0.1.1";
+        public static string ProcessStubVersion = "0.1.2";
         public static string currentDir = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
         public static Process p;
         public static bool UseFiltering = true;
