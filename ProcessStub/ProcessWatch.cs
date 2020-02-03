@@ -37,6 +37,7 @@ namespace ProcessStub
 
         public static void Start()
         {
+            RTCV.Common.Logging.StartLogging(VanguardCore.logPath);
             AutoHookTimer = new System.Timers.Timer();
             AutoHookTimer.Interval = 5000;
             AutoHookTimer.Elapsed += AutoHookTimer_Elapsed;
