@@ -16,7 +16,7 @@ namespace ProcessStub
 {
     public static class ProcessWatch
     {
-        public static string ProcessStubVersion = "0.1.2";
+        public static string ProcessStubVersion = "0.1.3";
         public static string currentDir = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
         public static Process p;
         public static bool UseFiltering = true;
@@ -132,37 +132,16 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
 
                     try
                     {
-                        StepActions.Execute();
+                        RtcClock.STEP_CORRUPT(true, true);
+
+                        if (p?.HasExited ?? false)
+                        {
+                            Console.WriteLine($"Bad2!");
+                        }
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine($"Corrupt Error!\n{ex.Message}\n{ex.StackTrace}");
-                    }
-
-                    CPU_STEP_Count++;
-                    bool autoCorrupt = RtcCore.AutoCorrupt;
-                    long errorDelay = RtcCore.ErrorDelay;
-                    if (autoCorrupt && CPU_STEP_Count >= errorDelay)
-                    {
-                        try
-                        {
-
-                            CPU_STEP_Count = 0;
-
-                            var selectedDomains = (string[]) AllSpec.UISpec["SELECTEDDOMAINS"];
-                            BlastLayer bl = RtcCore.GenerateBlastLayer(selectedDomains);
-                            if (bl != null)
-                                bl.Apply(false, false);
-
-                            if (p?.HasExited ?? false)
-                            {
-                                Console.WriteLine($"Bad2!");
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine($"AutoCorrupt Error!\n{ex.Message}\n{ex.StackTrace}");
-                        }
+                        Console.WriteLine($"STEP_CORRUPT Error!\n{ex.Message}\n{ex.StackTrace}");
                     }
                 }
                 finally
