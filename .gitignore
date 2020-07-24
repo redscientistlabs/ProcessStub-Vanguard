@@ -4,3 +4,4 @@ ProcessStub/obj/*
 ProcessCorrupt/bin/*
 ProcessCorrupt/obj/*
 packages/*
+.vscode
