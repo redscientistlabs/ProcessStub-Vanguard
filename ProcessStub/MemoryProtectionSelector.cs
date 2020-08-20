@@ -17,7 +17,7 @@ namespace ProcessStub
 			InitializeComponent();
 			FormClosing += MemoryProtectionSelector_Closing;
             Load += MemoryProtectionSelector_Load;
-            UICore.SetRTCColor(Color.FromArgb(149, 120, 161), this);
+            Colors.SetRTCColor(Color.FromArgb(149, 120, 161), this);
         }
 
         private void MemoryProtectionSelector_Load(object sender, EventArgs e)
@@ -47,7 +47,7 @@ namespace ProcessStub
             }
 
             ProcessExtensions.MemoryProtection a = ProcessExtensions.MemoryProtection.ZeroAccess;
-            foreach (CheckBox cb in tablePanel.Controls.Cast<CheckBox>().Where(item => item.Checked)) 
+            foreach (CheckBox cb in tablePanel.Controls.Cast<CheckBox>().Where(item => item.Checked))
                 a = a | (ProcessExtensions.MemoryProtection)Enum.Parse(typeof(ProcessExtensions.MemoryProtection), cb.Text);
 
             ProcessWatch.ProtectMode = a;

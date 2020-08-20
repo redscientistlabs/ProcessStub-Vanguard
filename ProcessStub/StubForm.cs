@@ -27,7 +27,7 @@ namespace ProcessStub
 
         private void StubForm_Load(object sender, EventArgs e)
         {
-            UICore.SetRTCColor(Color.FromArgb(149, 120, 161), this);
+            Colors.SetRTCColor(Color.FromArgb(149, 120, 161), this);
 
             tbFilterText.DeselectAll();
             tbAutoAttach.DeselectAll();
@@ -72,11 +72,11 @@ namespace ProcessStub
             btnUnloadTarget.Visible = false;
             btnRefreshDomains.Visible = false;
             btnBrowseTarget.Visible = true;
-            
+
             lbTarget.Size = originalLbTargetSize;
             lbTarget.Location = originalLbTargetLocation;
             lbTarget.Visible = false;
-            
+
 
             lbTarget.Text = "No target selected";
             lbTargetStatus.Text = "No target selected";
