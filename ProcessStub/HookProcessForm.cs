@@ -19,7 +19,7 @@ namespace ProcessStub
         public HookProcessForm()
         {
             InitializeComponent();
-            
+
         }
 
         private void HookProcessForm_Shown(object sender, EventArgs e)
@@ -29,7 +29,7 @@ namespace ProcessStub
 
         private void HookProcessForm_Load(object sender, EventArgs e)
         {
-            UICore.SetRTCColor(Color.FromArgb(149, 120, 161), this);
+            Colors.SetRTCColor(Color.FromArgb(149, 120, 161), this);
             lvProcesses.Columns.Add("Process",lvProcesses.Width - 20);
 
             var inProcesses = Process.GetProcesses();
@@ -114,7 +114,7 @@ namespace ProcessStub
                 DialogResult = DialogResult.Abort;
                 Close();
             }
-            
+
             DialogResult = DialogResult.OK;
             Close();
         }
