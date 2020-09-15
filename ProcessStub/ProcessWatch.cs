@@ -31,7 +31,7 @@ namespace ProcessStub
         public static volatile System.Timers.Timer AutoHookTimer;
         public static volatile System.Timers.Timer AutoCorruptTimer;
         public static ImageList ProcessIcons = new ImageList();
-        
+
 
         public static ProcessExtensions.MemoryProtection ProtectMode = ProcessExtensions.MemoryProtection.ReadWrite;
 
@@ -132,7 +132,7 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
 
                     try
                     {
-                        RtcClock.STEP_CORRUPT(true, true);
+                        RtcClock.StepCorrupt(true, true);
 
                         if (p?.HasExited ?? false)
                         {
@@ -375,7 +375,7 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
                         break;
                     }
 
-                    if (mbi.State == (uint)ProcessExtensions.MemoryType.MEM_COMMIT && 
+                    if (mbi.State == (uint)ProcessExtensions.MemoryType.MEM_COMMIT &&
                         mbi.Protect != ProcessExtensions.MemoryProtection.NoAccess && //Hard blacklist
                         mbi.Protect != ProcessExtensions.MemoryProtection.ZeroAccess && //Hard blacklist
                         (mbi.Protect | ProtectMode) == ProtectMode)
@@ -505,7 +505,7 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
                 "FortniteClient-Win64-Shipping_BE",
                 "FortniteClient-Win64-Shipping",
                 "TsLGame", //pubg
-                "SteamService", //Hosts VAC 
+                "SteamService", //Hosts VAC
                 "Steam",
                 "steamwebhelper",
                 "Origin",
