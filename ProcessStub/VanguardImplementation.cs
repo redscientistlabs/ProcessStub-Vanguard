@@ -6,7 +6,6 @@ using RTCV.CorruptCore;
 using RTCV.NetCore;
 using RTCV.ProcessCorrupt;
 using RTCV.Vanguard;
-using static RTCV.NetCore.NetcoreCommands;
 
 namespace Vanguard
 {
