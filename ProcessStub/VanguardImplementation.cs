@@ -57,7 +57,7 @@ namespace Vanguard
                 switch (message.Type) //Handle received messages here
                 {
 
-                    case REMOTE_ALLSPECSSENT:
+                    case RTCV.NetCore.Commands.Remote.AllSpecSent:
                         {
                             //We still need to set the emulator's path
                             AllSpec.VanguardSpec.Update(VSPEC.EMUDIR, ProcessWatch.currentDir);
@@ -67,15 +67,15 @@ namespace Vanguard
                             });
                         }
                         break;
-                    case SAVESAVESTATE:
+                    case RTCV.NetCore.Commands.Basic.SaveSavestate:
                         e.setReturnValue("");
                         break;
 
-                    case LOADSAVESTATE:
+                    case RTCV.NetCore.Commands.Basic.LoadSavestate:
                         e.setReturnValue(true);
                         break;
 
-                    case REMOTE_PRECORRUPTACTION:
+                    case RTCV.NetCore.Commands.Remote.PreCorruptAction:
 
                         SyncObjectSingleton.FormExecute(() =>
                         {
@@ -109,7 +109,7 @@ namespace Vanguard
 
                         break;
 
-                    case REMOTE_POSTCORRUPTACTION:
+                    case RTCV.NetCore.Commands.Remote.PostCorruptAction:
                         SyncObjectSingleton.FormExecute(() =>
                         {
                             lock (ProcessWatch.CorruptLock)
@@ -135,31 +135,31 @@ namespace Vanguard
                         });
                         break;
 
-                    case REMOTE_CLOSEGAME:
+                    case RTCV.NetCore.Commands.Remote.CloseGame:
                         break;
 
-                    case REMOTE_DOMAIN_GETDOMAINS:
+                    case RTCV.NetCore.Commands.Remote.DomainGetDomains:
                         SyncObjectSingleton.FormExecute(() =>
                         {
                             e.setReturnValue(ProcessWatch.GetInterfaces());
                         });
                         break;
 
-                    case REMOTE_DOMAIN_REFRESHDOMAINS:
+                    case RTCV.NetCore.Commands.Remote.DomainRefreshDomains:
                         SyncObjectSingleton.FormExecute(() => { ProcessWatch.UpdateDomains(); });
                         break;
 
-                    case REMOTE_EVENT_EMU_MAINFORM_CLOSE:
+                    case RTCV.NetCore.Commands.Remote.EventEmuMainFormClose:
                         SyncObjectSingleton.FormExecute(() =>
                         {
                             Environment.Exit(0);
                         });
                         break;
-                    case REMOTE_ISNORMALADVANCE:
+                    case RTCV.NetCore.Commands.Remote.IsNormalAdvance:
                         e.setReturnValue(true);
                         break;
 
-                    case REMOTE_EVENT_CLOSEEMULATOR:
+                    case RTCV.NetCore.Commands.Remote.EventCloseEmulator:
                         Environment.Exit(-1);
                         break;
                 }
