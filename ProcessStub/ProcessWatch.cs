@@ -31,7 +31,7 @@ namespace ProcessStub
         public static volatile System.Timers.Timer AutoHookTimer;
         public static volatile System.Timers.Timer AutoCorruptTimer;
         public static ImageList ProcessIcons = new ImageList();
-        
+
 
         public static ProcessExtensions.MemoryProtection ProtectMode = ProcessExtensions.MemoryProtection.ReadWrite;
 
@@ -132,7 +132,7 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
 
                     try
                     {
-                        RtcClock.STEP_CORRUPT(true, true);
+                        RtcClock.StepCorrupt(true, true);
 
                         if (p?.HasExited ?? false)
                         {
@@ -319,10 +319,10 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
                 AllSpec.VanguardSpec.Update(gameDone);
 
                 //This is local. If the domains changed it propgates over netcore
-                LocalNetCoreRouter.Route(NetcoreCommands.CORRUPTCORE, NetcoreCommands.REMOTE_EVENT_DOMAINSUPDATED, true, true);
+                LocalNetCoreRouter.Route(RTCV.NetCore.Commands.Basic.CorruptCore, RTCV.NetCore.Commands.Remote.EventDomainsUpdated, true, true);
 
                 //Asks RTC to restrict any features unsupported by the stub
-                LocalNetCoreRouter.Route(NetcoreCommands.CORRUPTCORE, NetcoreCommands.REMOTE_EVENT_RESTRICTFEATURES, true, true);
+                LocalNetCoreRouter.Route(RTCV.NetCore.Commands.Basic.CorruptCore, RTCV.NetCore.Commands.Remote.EventRestrictFeatures, true, true);
 
             }
             catch (Exception ex)
@@ -375,7 +375,7 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
                         break;
                     }
 
-                    if (mbi.State == (uint)ProcessExtensions.MemoryType.MEM_COMMIT && 
+                    if (mbi.State == (uint)ProcessExtensions.MemoryType.MEM_COMMIT &&
                         mbi.Protect != ProcessExtensions.MemoryProtection.NoAccess && //Hard blacklist
                         mbi.Protect != ProcessExtensions.MemoryProtection.ZeroAccess && //Hard blacklist
                         (mbi.Protect | ProtectMode) == ProtectMode)
@@ -505,7 +505,7 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
                 "FortniteClient-Win64-Shipping_BE",
                 "FortniteClient-Win64-Shipping",
                 "TsLGame", //pubg
-                "SteamService", //Hosts VAC 
+                "SteamService", //Hosts VAC
                 "Steam",
                 "steamwebhelper",
                 "Origin",
