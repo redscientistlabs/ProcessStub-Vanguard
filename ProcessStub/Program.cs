@@ -1,11 +1,11 @@
-﻿using System;
-using System.IO;
-using System.Reflection;
-using System.Windows.Forms;
-using RTCV.Common;
-
-namespace ProcessStub
+﻿namespace ProcessStub
 {
+    using System;
+    using System.IO;
+    using System.Reflection;
+    using System.Windows.Forms;
+    using RTCV.Common;
+
     internal static class Program
     {
         /// <summary>
@@ -27,7 +27,6 @@ namespace ProcessStub
             S.SET(frm);
             Application.Run(frm);
         }
-
 
         //Lifted from Bizhawk
         private static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)

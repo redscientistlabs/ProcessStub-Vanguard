@@ -1,17 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Drawing;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using RTCV.CorruptCore;
-using RTCV.ProcessCorrupt;
-using RTCV.UI;
-
 namespace ProcessStub
 {
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.Diagnostics;
+    using System.Drawing;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using System.Windows.Forms;
+    using RTCV.CorruptCore;
+    using RTCV.ProcessCorrupt;
+    using RTCV.UI;
+
     public partial class HookProcessForm : Form
     {
         public Process RequestedProcess;
@@ -19,7 +19,6 @@ namespace ProcessStub
         public HookProcessForm()
         {
             InitializeComponent();
-
         }
 
         private void HookProcessForm_Shown(object sender, EventArgs e)
@@ -30,7 +29,7 @@ namespace ProcessStub
         private void HookProcessForm_Load(object sender, EventArgs e)
         {
             Colors.SetRTCColor(Color.FromArgb(149, 120, 161), this);
-            lvProcesses.Columns.Add("Process",lvProcesses.Width - 20);
+            lvProcesses.Columns.Add("Process", lvProcesses.Width - 20);
 
             var inProcesses = Process.GetProcesses();
             lvProcesses.SmallImageList = ProcessWatch.ProcessIcons;
@@ -59,7 +58,7 @@ namespace ProcessStub
                                 ProcessWatch.ProcessIcons.Images.Add(process.ProcessName, icon);
                         }
 
-                        lvProcesses.Items.Add(new ListViewItem($"{process.ProcessName} : {process.Id}", process.ProcessName){Tag = process});
+                        lvProcesses.Items.Add(new ListViewItem($"{process.ProcessName} : {process.Id}", process.ProcessName) { Tag = process });
                     }
                 }
                 catch (Win32Exception ex)
@@ -70,19 +69,17 @@ namespace ProcessStub
             }
         }
 
-
         private void btnCancel_Click(object sender, EventArgs e)
         {
             lvProcesses.Items.Clear();
-            DialogResult = DialogResult.Cancel;;
+            DialogResult = DialogResult.Cancel;
         }
 
         private void btnSendList_Click(object sender, EventArgs e)
-		{
-
-			if (lvProcesses.SelectedItems.Count == 0)
-			{
-				MessageBox.Show("There's no process selected");
+        {
+            if (lvProcesses.SelectedItems.Count == 0)
+            {
+                MessageBox.Show("There's no process selected");
                 return;
             }
 
@@ -105,7 +102,6 @@ namespace ProcessStub
                     DialogResult = DialogResult.Abort;
                     Close();
                 }
-
             }
             catch (Win32Exception ex)
             {

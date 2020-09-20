@@ -1,11 +1,11 @@
-﻿using System;
-using System.Diagnostics;
-using System.IO;
-using System.Windows.Forms;
-using RTCV.CorruptCore;
-
 namespace RTCV.ProcessCorrupt
 {
+    using System;
+    using System.Diagnostics;
+    using System.IO;
+    using System.Windows.Forms;
+    using RTCV.CorruptCore;
+
     [Serializable()]
     public class ProcessMemoryDomain : IMemoryDomain
     {
@@ -16,15 +16,15 @@ namespace RTCV.ProcessCorrupt
         public int WordSize => 4;
         private ProcessExtensions.MemoryProtection mp = ProcessExtensions.MemoryProtection.Empty;
         private Process p;
-    
+
         private int errCount = 0;
         private int maxErrs = 5;
-    
+
         public override string ToString()
         {
             return Name;
         }
-    
+
         public ProcessMemoryDomain(Process _p, IntPtr baseAddress, long size)
         {
             try
@@ -33,13 +33,13 @@ namespace RTCV.ProcessCorrupt
                 {
                     throw new Exception("Process doesn't exist or has exited");
                 }
-    
+
                 p = _p;
                 Size = size;
                 baseAddr = baseAddress;
-    
+
                 var path = ProcessExtensions.GetMappedFileNameW(_p.Handle, baseAddress);
-                if (!String.IsNullOrWhiteSpace(path))
+                if (!string.IsNullOrWhiteSpace(path))
                     path = Path.GetFileName(path);
                 else
                     path = "UNKNOWN";
@@ -50,8 +50,7 @@ namespace RTCV.ProcessCorrupt
                 MessageBox.Show($"Failed to create ProcessInterface!\nMessage: {e.Message}");
             }
         }
-    
-    
+
         public void PokeByte(long address, byte data)
         {
             if (p == null || errCount > maxErrs)
@@ -66,7 +65,7 @@ namespace RTCV.ProcessCorrupt
                 errCount++;
             }
         }
-    
+
         public byte PeekByte(long address)
         {
             if (p == null || errCount > maxErrs)
@@ -101,7 +100,7 @@ namespace RTCV.ProcessCorrupt
         {
             throw new NotImplementedException();
         }
-    
+
         public bool SetMemoryProtection(ProcessExtensions.MemoryProtection memoryProtection)
         {
             var result = ProcessExtensions.VirtualProtectEx(p, baseAddr, (IntPtr)Size, memoryProtection, out var _mp);
@@ -111,14 +110,14 @@ namespace RTCV.ProcessCorrupt
         }
         public bool ResetMemoryProtection()
         {
-            if(mp != ProcessExtensions.MemoryProtection.Empty)
+            if (mp != ProcessExtensions.MemoryProtection.Empty)
                 return ProcessExtensions.VirtualProtectEx(p, baseAddr, (IntPtr)Size, mp, out _);
             return false;
         }
 
         public void FlushInstructionCache()
         {
-            ProcessExtensions.FlushInstructionCache(p.Handle, baseAddr, (UIntPtr) Size);
+            ProcessExtensions.FlushInstructionCache(p.Handle, baseAddr, (UIntPtr)Size);
         }
     }
 }
