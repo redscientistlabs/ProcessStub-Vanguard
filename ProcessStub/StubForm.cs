@@ -1,17 +1,16 @@
-﻿using System;
-using System.Drawing;
-using System.Windows.Forms;
-using RTCV.NetCore;
-using RTCV.Common;
-using RTCV.UI;
-using Vanguard;
-
 namespace ProcessStub
 {
+    using System;
+    using System.Drawing;
+    using System.Windows.Forms;
+    using RTCV.Common;
+    using RTCV.NetCore;
+    using RTCV.UI;
+    using Vanguard;
+
     public partial class StubForm : Form
     {
         private Point originalLbTargetLocation;
-
 
         private Size originalLbTargetSize;
 
@@ -22,7 +21,6 @@ namespace ProcessStub
             SyncObjectSingleton.SyncObject = this;
 
             Text += " " + ProcessWatch.ProcessStubVersion;
-
         }
 
         private void StubForm_Load(object sender, EventArgs e)
@@ -38,7 +36,6 @@ namespace ProcessStub
 
         public void RunProgressBar(string progressLabel, int maxProgress, Action<object, EventArgs> action, Action<object, EventArgs> postAction = null)
         {
-
             if (ProcessWatch.progressForm != null)
             {
                 ProcessWatch.progressForm.Close();
@@ -56,7 +53,6 @@ namespace ProcessStub
             originalLbTargetLocation = lbTarget.Location;
             lbTarget.Location = btnBrowseTarget.Location;
             lbTarget.Visible = true;
-
 
             btnBrowseTarget.Visible = false;
             originalLbTargetSize = lbTarget.Size;
@@ -77,14 +73,12 @@ namespace ProcessStub
             lbTarget.Location = originalLbTargetLocation;
             lbTarget.Visible = false;
 
-
             lbTarget.Text = "No target selected";
             lbTargetStatus.Text = "No target selected";
         }
 
         private void BtnBrowseTarget_Click(object sender, EventArgs e)
         {
-
             if (!ProcessWatch.LoadTarget())
                 return;
 
@@ -92,7 +86,6 @@ namespace ProcessStub
                 VanguardCore.Start();
 
             EnableTargetInterface();
-
         }
 
         private void BtnReleaseTarget_Click(object sender, EventArgs e)
@@ -101,7 +94,6 @@ namespace ProcessStub
                 return;
             DisableTargetInterface();
         }
-
 
         private void StubForm_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -118,24 +110,19 @@ namespace ProcessStub
 
                 ContextMenuStrip columnsMenu = new ContextMenuStrip();
 
-
                 ((ToolStripMenuItem)columnsMenu.Items.Add("Use AutoHook", null, (ob, ev) =>
                 {
-
                     ProcessWatch.AutoHookTimer.Enabled = !ProcessWatch.AutoHookTimer.Enabled;
                     tbAutoAttach.Enabled = ProcessWatch.AutoHookTimer.Enabled;
-
                 })).Checked = ProcessWatch.AutoHookTimer.Enabled;
 
                 ((ToolStripMenuItem)columnsMenu.Items.Add("Use Filtering", null, (ob, ev) =>
                 {
-
                     ProcessWatch.UseFiltering = !ProcessWatch.UseFiltering;
                     Params.SetParam("USEFILTERING", ProcessWatch.UseFiltering.ToString());
 
                     if (VanguardCore.vanguardConnected)
                         ProcessWatch.UpdateDomains();
-
                 })).Checked = ProcessWatch.UseFiltering;
 
                 /*
@@ -150,18 +137,13 @@ namespace ProcessStub
                 */
                 ((ToolStripMenuItem)columnsMenu.Items.Add("Use Blacklist", null, (ob, ev) =>
                 {
-
                     ProcessWatch.UseBlacklist = !ProcessWatch.UseBlacklist;
                     Params.SetParam("USEBLACKLIST", ProcessWatch.UseBlacklist.ToString());
-
-
                 })).Checked = ProcessWatch.UseBlacklist;
                 ((ToolStripMenuItem)columnsMenu.Items.Add("Suspend Process on Corrupt", null, (ob, ev) =>
                 {
-
                     ProcessWatch.SuspendProcess = !ProcessWatch.SuspendProcess;
                     Params.SetParam("SUSPENDPROCESS", ProcessWatch.SuspendProcess.ToString());
-
                 })).Checked = ProcessWatch.SuspendProcess;
 
                 columnsMenu.Items.Add(new ToolStripSeparator());
@@ -169,7 +151,6 @@ namespace ProcessStub
                 {
                     S.GET<MemoryProtectionSelector>().ShowDialog();
                 });
-
 
                 columnsMenu.Show(this, locate);
             }

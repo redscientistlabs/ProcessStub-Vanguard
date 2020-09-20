@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Win32.SafeHandles;
-
 namespace RTCV.ProcessCorrupt
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Drawing;
+    using System.Linq;
+    using System.Runtime.InteropServices;
+    using System.Text;
+    using System.Threading.Tasks;
+    using Microsoft.Win32.SafeHandles;
 
     //Lifted from Bizhawk https://github.com/TASVideos/BizHawk
     public static class ProcessExtensions
@@ -25,6 +24,7 @@ namespace RTCV.ProcessCorrupt
             MEM_TOP_DOWN = 0x00100000,
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1028:Enum Storage should be Int32")]
         public enum NtStatus : uint
         {
             // Success
@@ -403,7 +403,6 @@ namespace RTCV.ProcessCorrupt
             public readonly uint __alignment2;
         }
 
-
         /// <summary>
         /// Defines the protection to be applied to a region of virtual memory
         /// </summary>
@@ -510,7 +509,7 @@ namespace RTCV.ProcessCorrupt
         [DllImport("kernel32.dll", SetLastError = true)]
         private static extern bool VirtualProtectEx(IntPtr processHandle, IntPtr baseAddress, IntPtr protectionSize, MemoryProtection protectionType, out MemoryProtection oldProtectionType);
         [DllImport("kernel32.dll", SetLastError = true)]
-        static extern IntPtr VirtualAllocEx(IntPtr hProcess, IntPtr lpAddress,  uint dwSize, AllocationType flAllocationType, MemoryProtection flProtect);
+        static extern IntPtr VirtualAllocEx(IntPtr hProcess, IntPtr lpAddress, uint dwSize, AllocationType flAllocationType, MemoryProtection flProtect);
         [DllImport("kernel32.dll", SetLastError = true)]
         private static extern bool ReadProcessMemory(IntPtr processHandle, IntPtr baseAddress, byte[] lpBuffer, IntPtr bytesToRead, IntPtr numberOfBytesReadBuffer);
         [DllImport("kernel32.dll", SetLastError = true)]
@@ -536,7 +535,6 @@ namespace RTCV.ProcessCorrupt
         private static extern uint QueryFullProcessImageName([In] IntPtr hProcess, [In] uint dwFlags, [Out] StringBuilder lpExeName, [In, Out] ref uint lpdwSize);
         [DllImport("kernel32.dll")]
         public static extern void GetSystemInfo(out SYSTEM_INFO lpSystemInfo);
-
 
         public static bool VirtualQueryEx(Process p, IntPtr baseAddress, out MemoryBasicInformation memoryBasicInformation)
         {
@@ -570,10 +568,8 @@ namespace RTCV.ProcessCorrupt
             var bytesToWriteBufferHandle = GCHandle.Alloc(bytesToWrite, GCHandleType.Pinned);
             try
             {
-
                 if (!WriteProcessMemory(p.Handle, baseAddress, bytesToWriteBufferHandle.AddrOfPinnedObject(), new IntPtr(bytesToWrite.Length), IntPtr.Zero))
                 {
-
                     //throw new Exception($"Failed to read write a region  of virtual memory in the remote process. Error code: {Marshal.GetLastWin32Error()}");
                 }
             }
@@ -581,14 +577,13 @@ namespace RTCV.ProcessCorrupt
             {
                 bytesToWriteBufferHandle.Free();
             }
-
         }
 
         public static bool VirtualProtectEx(Process p, IntPtr baseAddress, IntPtr dwSize, MemoryProtection protType, out MemoryProtection oldProtType)
         {
             if (!VirtualProtectEx(p.Handle, baseAddress, dwSize, protType, out oldProtType))
             {
-              //  Console.WriteLine($"Failed to protect a region of virtual memory {baseAddress.ToString("X")} + {dwSize.ToString("X")} in the remote process");
+                //  Console.WriteLine($"Failed to protect a region of virtual memory {baseAddress.ToString("X")} + {dwSize.ToString("X")} in the remote process");
                 return false;
             }
 
@@ -673,7 +668,7 @@ namespace RTCV.ProcessCorrupt
                     SuspendThread(pOpenThread);
                     CloseHandle(pOpenThread);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     Console.WriteLine($"Failed to suspend thread {thread.Id}");
                     success = false;
@@ -697,14 +692,13 @@ namespace RTCV.ProcessCorrupt
                     ResumeThread(pOpenThread);
                     CloseHandle(pOpenThread);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     Console.WriteLine($"Failed to resume thread {thread.Id}");
                     success = false;
                 }
             }
             return success;
-
         }
 
         /*

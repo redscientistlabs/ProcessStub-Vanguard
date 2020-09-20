@@ -1,14 +1,14 @@
-﻿using System;
-using System.Threading;
-using System.Windows.Forms;
-using ProcessStub;
-using RTCV.CorruptCore;
-using RTCV.NetCore;
-using RTCV.ProcessCorrupt;
-using RTCV.Vanguard;
-
 namespace Vanguard
 {
+    using System;
+    using System.Threading;
+    using System.Windows.Forms;
+    using ProcessStub;
+    using RTCV.CorruptCore;
+    using RTCV.NetCore;
+    using RTCV.ProcessCorrupt;
+    using RTCV.Vanguard;
+
     public static class VanguardImplementation
     {
         public static VanguardConnector connector;
@@ -56,7 +56,6 @@ namespace Vanguard
                 ConsoleEx.WriteLine(message.Type);
                 switch (message.Type) //Handle received messages here
                 {
-
                     case RTCV.NetCore.Commands.Remote.AllSpecSent:
                         {
                             //We still need to set the emulator's path
@@ -81,7 +80,6 @@ namespace Vanguard
                         {
                             lock (ProcessWatch.CorruptLock)
                             {
-
                                 if (ProcessWatch.SuspendProcess)
                                 {
                                     if (!ProcessWatch.p?.Suspend() ?? true && !suspendWarned)
@@ -130,7 +128,6 @@ namespace Vanguard
                                         suspendWarned = (MessageBox.Show("Failed to resume a thread!\nWould you like to continue to receive warnings?", "Failed to resume thread", MessageBoxButtons.YesNo, MessageBoxIcon.Error) == DialogResult.Yes);
                                     }
                                 }
-
                             }
                         });
                         break;

@@ -1,19 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Threading;
-using System.Windows.Forms;
-using RTCV.CorruptCore;
-using RTCV.NetCore;
-using RTCV.Common;
-using RTCV.ProcessCorrupt;
-using Vanguard;
-
 namespace ProcessStub
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.IO;
+    using System.Linq;
+    using System.Reflection;
+    using System.Threading;
+    using System.Windows.Forms;
+    using RTCV.Common;
+    using RTCV.CorruptCore;
+    using RTCV.NetCore;
+    using RTCV.ProcessCorrupt;
+    using Vanguard;
+
     public static class ProcessWatch
     {
         public static string ProcessStubVersion = "0.1.3";
@@ -24,14 +24,12 @@ namespace ProcessStub
         public static bool UseBlacklist = true;
         public static bool SuspendProcess = false;
         public static bool DontChangeMemoryProtection = false;
-        public static Object CorruptLock = new object();
-        static int CPU_STEP_Count = 0;
+        public static object CorruptLock = new object();
 
         public static ProgressForm progressForm;
         public static volatile System.Timers.Timer AutoHookTimer;
         public static volatile System.Timers.Timer AutoCorruptTimer;
         public static ImageList ProcessIcons = new ImageList();
-
 
         public static ProcessExtensions.MemoryProtection ProtectMode = ProcessExtensions.MemoryProtection.ReadWrite;
 
@@ -48,7 +46,6 @@ namespace ProcessStub
             AutoCorruptTimer.Elapsed += CorruptTimer_Elapsed;
             AutoCorruptTimer.Start();
 
-
             if (VanguardCore.vanguardConnected)
                 UpdateDomains();
 
@@ -56,7 +53,6 @@ namespace ProcessStub
 
             DisableInterface();
             RtcCore.EmuDirOverride = true; //allows the use of this value before vanguard is connected
-
 
             string paramsPath = Path.Combine(ProcessWatch.currentDir, "PARAMS");
 
@@ -89,9 +85,9 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
             try
             {
                 if (protectionMode != null)
-                    ProtectMode = (ProcessExtensions.MemoryProtection) Enum.Parse(typeof(ProcessExtensions.MemoryProtection), protectionMode);
+                    ProtectMode = (ProcessExtensions.MemoryProtection)Enum.Parse(typeof(ProcessExtensions.MemoryProtection), protectionMode);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 Params.RemoveParam("PROTECTIONMODE");
                 ProtectMode = ProcessExtensions.MemoryProtection.ReadWrite;
@@ -163,7 +159,6 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
                         }
                     }
                 }
-
             }
 
             if (p.HasExited)
@@ -181,7 +176,7 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
                     return;
                 SyncObjectSingleton.FormExecute(() => S.GET<StubForm>().lbTargetStatus.Text = "Waiting...");
                 var procToFind = S.GET<StubForm>().tbAutoAttach.Text;
-                if (String.IsNullOrWhiteSpace(procToFind))
+                if (string.IsNullOrWhiteSpace(procToFind))
                     return;
 
                 SyncObjectSingleton.FormExecute(() => S.GET<StubForm>().lbTargetStatus.Text = "Hooking...");
@@ -206,7 +201,6 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
             }
             AutoHookTimer.Start();
         }
-
 
         internal static bool LoadTarget(Process _p = null)
         {
@@ -269,9 +263,6 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
 
                 Action<object, EventArgs> postAction = (ob, ea) =>
                 {
-
-
-
                     if (p == null)
                     {
                         MessageBox.Show("Failed to load target");
@@ -282,7 +273,6 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
                     S.GET<StubForm>().lbTarget.Text = p.ProcessName;
                     S.GET<StubForm>().lbTargetStatus.Text = "Hooked!";
 
-
                     //Refresh the UI
                     //RefreshUIPostLoad();
                 };
@@ -291,7 +281,6 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
 
             return true;
         }
-
 
         internal static bool CloseTarget(bool updateDomains = true)
         {
@@ -313,7 +302,7 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
                 gameDone[VSPEC.SYSTEMPREFIX] = "ProcessStub";
                 gameDone[VSPEC.SYSTEMCORE] = "ProcessStub";
                 gameDone[VSPEC.OPENROMFILENAME] = p?.ProcessName ?? "UNKNOWN";
-                gameDone[VSPEC.MEMORYDOMAINS_BLACKLISTEDDOMAINS] = new string[0];
+                gameDone[VSPEC.MEMORYDOMAINS_BLACKLISTEDDOMAINS] = Array.Empty<string>();
                 gameDone[VSPEC.MEMORYDOMAINS_INTERFACES] = GetInterfaces();
                 gameDone[VSPEC.CORE_DISKBASED] = false;
                 AllSpec.VanguardSpec.Update(gameDone);
@@ -323,7 +312,6 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
 
                 //Asks RTC to restrict any features unsupported by the stub
                 LocalNetCoreRouter.Route(RTCV.NetCore.Endpoints.CorruptCore, RTCV.NetCore.Commands.Remote.EventRestrictFeatures, true, true);
-
             }
             catch (Exception ex)
             {
@@ -342,21 +330,20 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
                     if (ProcessExtensions.GetProcessSafe(p) == null)
                     {
                         Console.WriteLine($"p was null!");
-                        return new MemoryDomainProxy[] { };
+                        return Array.Empty<MemoryDomainProxy>();
                     }
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine($"GetInterfaces threw an exception!\n{e.Message}\n{e.StackTrace}");
-                    return new MemoryDomainProxy[] { };
+                    return Array.Empty<MemoryDomainProxy>();
                 }
 
                 List<MemoryDomainProxy> interfaces = new List<MemoryDomainProxy>();
 
                 var _p = ProcessExtensions.GetProcessSafe(p);
                 if (IsProcessBlacklisted(_p))
-                    return new MemoryDomainProxy[] { };
-
+                    return Array.Empty<MemoryDomainProxy>();
 
                 ProcessExtensions.GetSystemInfo(out var info);
                 IntPtr minAddr = info.minimumApplicationAddress;
@@ -367,8 +354,7 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
                 {
                     _p = ProcessExtensions.GetProcessSafe(p);
                     if (_p == null)
-                        return new MemoryDomainProxy[] { };
-
+                        return Array.Empty<MemoryDomainProxy>();
 
                     if (ProcessExtensions.VirtualQueryEx(_p, minAddr, out var mbi) == false)
                     {
@@ -381,9 +367,9 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
                         (mbi.Protect | ProtectMode) == ProtectMode)
                     {
                         var name = ProcessExtensions.GetMappedFileNameW(_p.Handle, mbi.BaseAddress);
-                        if (String.IsNullOrWhiteSpace(name) || !IsPathBlacklisted(name))
+                        if (string.IsNullOrWhiteSpace(name) || !IsPathBlacklisted(name))
                         {
-                            if (String.IsNullOrWhiteSpace(name))
+                            if (string.IsNullOrWhiteSpace(name))
                                 name = "UNKNOWN";
                             var filters = S.GET<StubForm>().tbFilterText.Text.Split('\n').Select(x => x.Trim()).ToArray();
                             if (!UseFiltering || filters.Any(x => name.ToUpper().Contains(x.ToUpper())))
@@ -407,9 +393,8 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
                 if (VanguardCore.ShowErrorDialog(ex, true) == DialogResult.Abort)
                     throw new RTCV.NetCore.AbortEverythingException();
 
-                return new MemoryDomainProxy[] { };
+                return Array.Empty<MemoryDomainProxy>();
             }
-
         }
 
         public static void EnableInterface()
@@ -428,7 +413,8 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
             try
             {
                 return IsModuleBlacklisted(_p.MainModule);
-            }catch(InvalidOperationException e)
+            }
+            catch (InvalidOperationException e)
             {
                 Console.WriteLine($"IsProcessBlacklisted threw exception {e}");
                 return true;
@@ -442,7 +428,7 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
             try
             {
                 var filename = "";
-                if (!String.IsNullOrWhiteSpace(pm?.FileName))
+                if (!string.IsNullOrWhiteSpace(pm?.FileName))
                     filename = Path.GetFileName(pm.FileName);
 
                 if (IsExecutableNameBlacklisted(filename))
@@ -515,19 +501,14 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
             if (hardBlacklisted.Any(x => executableName.Equals(x, StringComparison.OrdinalIgnoreCase)))
                 return true;
 
-
             if (!UseBlacklist)
                 return false;
 
-            var blacklisted = new string[]
-            {
-
-            };
+            var blacklisted = Array.Empty<string>();
             if (blacklisted.Any(x => executableName.Equals(x, StringComparison.OrdinalIgnoreCase)))
                 return true;
 
             return false;
         }
     }
-
 }

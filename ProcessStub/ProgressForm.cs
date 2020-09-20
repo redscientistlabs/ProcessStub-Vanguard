@@ -1,11 +1,11 @@
-﻿using System;
-using System.ComponentModel;
-using System.Windows.Forms;
-using RTCV.NetCore;
-using RTCV.Common;
-
 namespace ProcessStub
 {
+    using System;
+    using System.ComponentModel;
+    using System.Windows.Forms;
+    using RTCV.Common;
+    using RTCV.NetCore;
+
     public partial class ProgressForm : Form
     {
         public static Action<object, EventArgs> postAction;
@@ -41,9 +41,6 @@ namespace ProcessStub
             Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Bottom;
             Show();
             BringToFront();
-
-
-
         }
 
         public void Run()
@@ -58,7 +55,8 @@ namespace ProcessStub
             ProcessWatch.progressForm = null;
 
             if (postAction != null)
-                SyncObjectSingleton.FormExecute(() => {
+                SyncObjectSingleton.FormExecute(() =>
+                {
                     postAction.Invoke(null, null);
                 });
         }
@@ -75,12 +73,11 @@ namespace ProcessStub
 
             if (e.UserState != null && e.UserState is string)
             {
-                if(e.UserState as string == "DEFAULT")
+                if (e.UserState as string == "DEFAULT")
                     lbProgress.Text = defaultLabel;
                 else
                     lbProgress.Text = e.UserState as string;
             }
-
         }
     }
 }

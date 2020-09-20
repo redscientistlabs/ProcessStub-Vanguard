@@ -1,21 +1,21 @@
-﻿using System;
-using System.Drawing;
-using System.Linq;
-using System.Windows.Forms;
-using RTCV.CorruptCore;
-using RTCV.NetCore;
-using RTCV.Common;
-using RTCV.ProcessCorrupt;
-using RTCV.UI;
-
 namespace ProcessStub
 {
-	public partial class MemoryProtectionSelector : Form, IAutoColorize
-	{
+    using System;
+    using System.Drawing;
+    using System.Linq;
+    using System.Windows.Forms;
+    using RTCV.Common;
+    using RTCV.CorruptCore;
+    using RTCV.NetCore;
+    using RTCV.ProcessCorrupt;
+    using RTCV.UI;
+
+    public partial class MemoryProtectionSelector : Form, IAutoColorize
+    {
         public MemoryProtectionSelector()
-		{
-			InitializeComponent();
-			FormClosing += MemoryProtectionSelector_Closing;
+        {
+            InitializeComponent();
+            FormClosing += MemoryProtectionSelector_Closing;
             Load += MemoryProtectionSelector_Load;
             Colors.SetRTCColor(Color.FromArgb(149, 120, 161), this);
         }
@@ -38,12 +38,12 @@ namespace ProcessStub
         }
 
         private void MemoryProtectionSelector_Closing(object sender, FormClosingEventArgs e)
-		{
-			if (tablePanel.Controls.Cast<CheckBox>().Count(item => item.Checked) == 0)
-			{
-				e.Cancel = true;
-				MessageBox.Show("Select at least one type of memory protection");
-				return;
+        {
+            if (!tablePanel.Controls.Cast<CheckBox>().Any(item => item.Checked))
+            {
+                e.Cancel = true;
+                MessageBox.Show("Select at least one type of memory protection");
+                return;
             }
 
             ProcessExtensions.MemoryProtection a = ProcessExtensions.MemoryProtection.ZeroAccess;

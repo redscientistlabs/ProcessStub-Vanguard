@@ -1,16 +1,16 @@
-﻿using System;
-using System.IO;
-using System.Reflection;
-using System.Threading;
-using System.Windows.Forms;
-using ProcessStub;
-using RTCV.CorruptCore;
-using RTCV.NetCore;
-using RTCV.Common;
-using RTCV.Vanguard;
-
 namespace Vanguard
 {
+    using System;
+    using System.IO;
+    using System.Reflection;
+    using System.Threading;
+    using System.Windows.Forms;
+    using ProcessStub;
+    using RTCV.Common;
+    using RTCV.CorruptCore;
+    using RTCV.NetCore;
+    using RTCV.Vanguard;
+
     public static class VanguardCore
     {
         public static string[] args;
@@ -64,13 +64,13 @@ namespace Vanguard
             set => AllSpec.VanguardSpec.Update(VSPEC.CORE_LASTLOADERROM, value);
         }
 
-        public static string[] BlacklistedDomains
+        internal static string[] BlacklistedDomains
         {
             get => (string[])AllSpec.VanguardSpec[VSPEC.MEMORYDOMAINS_BLACKLISTEDDOMAINS];
             set => AllSpec.VanguardSpec.Update(VSPEC.MEMORYDOMAINS_BLACKLISTEDDOMAINS, value);
         }
 
-        public static MemoryDomainProxy[] MemoryInterfacees
+        internal static MemoryDomainProxy[] MemoryInterfacees
         {
             get => (MemoryDomainProxy[])AllSpec.VanguardSpec[VSPEC.MEMORYDOMAINS_INTERFACES];
             set => AllSpec.VanguardSpec.Update(VSPEC.MEMORYDOMAINS_INTERFACES, value);
@@ -80,7 +80,6 @@ namespace Vanguard
         {
             return new CloudDebug(exception, canContinue).Start();
         }
-
 
         /// <summary>
         /// Global exceptions in Non User Interfarce(other thread) antipicated error
@@ -92,7 +91,6 @@ namespace Vanguard
             Exception ex = (Exception)e.ExceptionObject;
             Form error = new CloudDebug(ex);
             var result = error.ShowDialog();
-
         }
 
         /// <summary>
@@ -116,7 +114,6 @@ namespace Vanguard
                     });
         }
 
-
         public static PartialSpec getDefaultPartial()
         {
             var partial = new PartialSpec("VanguardSpec");
@@ -127,8 +124,8 @@ namespace Vanguard
             partial[VSPEC.SYSTEMPREFIX] = string.Empty;
             partial[VSPEC.OPENROMFILENAME] = string.Empty;
             partial[VSPEC.SYNCSETTINGS] = string.Empty;
-            partial[VSPEC.MEMORYDOMAINS_BLACKLISTEDDOMAINS] = new string[] { };
-            partial[VSPEC.MEMORYDOMAINS_INTERFACES] = new MemoryDomainProxy[] { };
+            partial[VSPEC.MEMORYDOMAINS_BLACKLISTEDDOMAINS] = Array.Empty<string>();
+            partial[VSPEC.MEMORYDOMAINS_INTERFACES] = Array.Empty<MemoryDomainProxy>();
             partial[VSPEC.CORE_LASTLOADERROM] = -1;
             partial[VSPEC.SUPPORTS_RENDERING] = false;
             partial[VSPEC.SUPPORTS_CONFIG_MANAGEMENT] = false;
@@ -163,11 +160,9 @@ namespace Vanguard
             LocalNetCoreRouter.Route(RTCV.NetCore.Endpoints.CorruptCore, RTCV.NetCore.Commands.Remote.PushVanguardSpec, emuSpecTemplate, true);
             LocalNetCoreRouter.Route(RTCV.NetCore.Endpoints.UI, RTCV.NetCore.Commands.Remote.PushVanguardSpec, emuSpecTemplate, true);
 
-
             AllSpec.VanguardSpec.SpecUpdated += (o, e) =>
             {
                 PartialSpec partial = e.partialSpec;
-
 
                 LocalNetCoreRouter.Route(RTCV.NetCore.Endpoints.CorruptCore, RTCV.NetCore.Commands.Remote.PushVanguardSpecUpdate, partial, true);
                 LocalNetCoreRouter.Route(RTCV.NetCore.Endpoints.UI, RTCV.NetCore.Commands.Remote.PushVanguardSpecUpdate, partial, true);
@@ -178,7 +173,6 @@ namespace Vanguard
 
         public static void Start()
         {
-
             vanguardStarted = true;
 
             //Grab an object on the main thread to use for netcore invokes
