@@ -10,7 +10,7 @@ namespace ProcessStub
     using RTCV.ProcessCorrupt;
     using RTCV.UI;
 
-    public partial class MemoryProtectionSelector : Form, IAutoColorize
+    public partial class MemoryProtectionSelector : RTCV.UI.Modular.ColorizedForm
     {
         public MemoryProtectionSelector()
         {
