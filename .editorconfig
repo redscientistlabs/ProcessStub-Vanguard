@@ -227,9 +227,6 @@ csharp_prefer_simple_using_statement = false # Prefer the old using statement fo
 # Catch more specific exception type
 dotnet_diagnostic.CA1031.severity = none
 
-# Do not nest types
-dotnet_diagnostic.CA1034.severity = none
-
 # Do not declare visible instance fields
 dotnet_diagnostic.CA1051.severity = none
 

@@ -25,6 +25,7 @@ namespace RTCV.ProcessCorrupt
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1028:Enum Storage should be Int32")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1069: Enums should not have duplicate values", Justification = "NtStatus values reflect those provided by the operating system")]
         public enum NtStatus : uint
         {
             // Success
@@ -367,42 +368,6 @@ namespace RTCV.ProcessCorrupt
             MaximumNtStatus = 0xffffffff
         }
 
-        /*
-        [StructLayout(LayoutKind.Sequential)]
-        public struct MemoryBasicInformation
-        {
-            public readonly IntPtr BaseAddress;
-
-            public readonly IntPtr AllocationBase;
-            public readonly uint AllocationProtect;
-
-            public readonly IntPtr RegionSize;
-
-            public readonly uint State;
-
-            public readonly MemoryProtection Protect;
-
-            public readonly uint Type;
-        }*/
-        [StructLayout(LayoutKind.Sequential)]
-        public struct MemoryBasicInformation
-        {
-            public readonly IntPtr BaseAddress;
-
-            public readonly IntPtr AllocationBase;
-            public readonly uint AllocationProtect;
-            public readonly uint __alignment1;
-
-            public readonly IntPtr RegionSize;
-
-            public readonly uint State;
-
-            public readonly MemoryProtection Protect;
-
-            public readonly uint Type;
-            public readonly uint __alignment2;
-        }
-
         /// <summary>
         /// Defines the protection to be applied to a region of virtual memory
         /// </summary>
@@ -473,21 +438,6 @@ namespace RTCV.ProcessCorrupt
             TopDown = 0x100000,
             WriteWatch = 0x200000,
             LargePages = 0x20000000
-        }
-        [StructLayout(LayoutKind.Sequential)]
-        public struct SYSTEM_INFO
-        {
-            public ushort processorArchitecture;
-            ushort reserved;
-            public uint pageSize;
-            public IntPtr minimumApplicationAddress;  // minimum address
-            public IntPtr maximumApplicationAddress;  // maximum address
-            public IntPtr activeProcessorMask;
-            public uint numberOfProcessors;
-            public uint processorType;
-            public uint allocationGranularity;
-            public ushort processorLevel;
-            public ushort processorRevision;
         }
 
         [DllImport("kernel32.dll")]
