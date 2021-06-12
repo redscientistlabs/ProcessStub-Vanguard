@@ -43,9 +43,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MemoryBasicInformation.cs" />
     <Compile Include="ProcessExtensions.cs" />
     <Compile Include="ProcessMemoryDomain.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SYSTEM_INFO.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\RTCV\Source\Libraries\CorruptCore\CorruptCore.csproj">
