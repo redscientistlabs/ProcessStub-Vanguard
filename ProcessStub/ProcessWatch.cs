@@ -31,7 +31,7 @@ namespace ProcessStub
         public static volatile System.Timers.Timer AutoCorruptTimer;
         public static ImageList ProcessIcons = new ImageList();
 
-        public static ProcessExtensions.MemoryProtection ProtectMode = ProcessExtensions.MemoryProtection.ReadWrite;
+        public static ProcessExtensions.MemProtection ProtectMode = ProcessExtensions.MemProtection.Memory_ReadWrite;
 
         public static void Start()
         {
@@ -85,12 +85,12 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
             try
             {
                 if (protectionMode != null)
-                    ProtectMode = (ProcessExtensions.MemoryProtection)Enum.Parse(typeof(ProcessExtensions.MemoryProtection), protectionMode);
+                    ProtectMode = (ProcessExtensions.MemProtection)Enum.Parse(typeof(ProcessExtensions.MemProtection), protectionMode);
             }
             catch (Exception)
             {
                 Params.RemoveParam("PROTECTIONMODE");
-                ProtectMode = ProcessExtensions.MemoryProtection.ReadWrite;
+                ProtectMode = ProcessExtensions.MemProtection.Memory_ReadWrite;
             }
 
             UseExceptionHandler = Params.ReadParam("USEEXCEPTIONHANDLER") == "True";
@@ -117,7 +117,7 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
                         {
                             if (m.MD is ProcessMemoryDomain pmd)
                             {
-                                pmd.SetMemoryProtection(ProcessExtensions.MemoryProtection.ExecuteReadWrite);
+                                pmd.SetMemoryProtection(ProcessExtensions.MemProtection.Memory_ExecuteReadWrite);
                                 if (p?.HasExited ?? false)
                                 {
                                     Console.WriteLine($"Bad! {pmd.Name}");
@@ -361,9 +361,9 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
                         break;
                     }
 
-                    if (mbi.State == (uint)ProcessExtensions.MemoryType.MEM_COMMIT &&
-                        mbi.Protect != ProcessExtensions.MemoryProtection.NoAccess && //Hard blacklist
-                        mbi.Protect != ProcessExtensions.MemoryProtection.ZeroAccess && //Hard blacklist
+                    if (mbi.State == (uint)ProcessExtensions.MemType.MEMORY_COMMIT &&
+                        mbi.Protect != ProcessExtensions.MemProtection.Memory_NoAccess && //Hard blacklist
+                        mbi.Protect != ProcessExtensions.MemProtection.Memory_ZeroAccess && //Hard blacklist
                         (mbi.Protect | ProtectMode) == ProtectMode)
                     {
                         var name = ProcessExtensions.GetMappedFileNameW(_p.Handle, mbi.BaseAddress);

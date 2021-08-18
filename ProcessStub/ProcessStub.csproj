@@ -40,22 +40,10 @@
     <ApplicationIcon>ProcessStubIcon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Ceras, Version=4.1.7.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Ceras.4.1.7\lib\net47\Ceras.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\RTCV_Deploy\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\..\RTCV_Deploy\packages\System.Buffers.4.5.0\lib\netstandard2.0\System.Buffers.dll</HintPath>
-    </Reference>
     <Reference Include="System.Core" />
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Compression.FileSystem" />
-    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\..\RTCV_Deploy\packages\System.Runtime.CompilerServices.Unsafe.4.5.2\lib\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
-    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -136,22 +124,27 @@
     <ProjectReference Include="..\..\RTCV\Source\Frontend\UI\UI.csproj">
       <Project>{bd376bb2-17ec-4fb0-a9fe-6b1bbf4af3e3}</Project>
       <Name>UI</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\RTCV\Source\Libraries\Common\Common.csproj">
       <Project>{a31c17e1-2eab-434f-a022-20193f2ceab7}</Project>
       <Name>Common</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\RTCV\Source\Libraries\CorruptCore\CorruptCore.csproj">
       <Project>{b5633a86-dc66-4723-88eb-7dfc95458072}</Project>
       <Name>CorruptCore</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\RTCV\Source\Libraries\NetCore\NetCore.csproj">
       <Project>{7e106aec-5614-4206-9e4d-25759c90e8ae}</Project>
       <Name>NetCore</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\RTCV\Source\Libraries\Vanguard\Vanguard.csproj">
       <Project>{364c705e-b7ab-4a94-a59b-88899ce65958}</Project>
       <Name>Vanguard</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\ProcessCorrupt\ProcessCorrupt.csproj">
       <Project>{a1a6429d-f28e-49e2-9b17-2ff83a9170fd}</Project>

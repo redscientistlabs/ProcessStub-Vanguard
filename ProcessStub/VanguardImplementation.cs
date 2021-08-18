@@ -94,7 +94,7 @@ namespace Vanguard
                                 {
                                     if (m.MD is ProcessMemoryDomain pmd)
                                     {
-                                        if (!pmd.SetMemoryProtection(ProcessExtensions.MemoryProtection.ExecuteReadWrite))
+                                        if (!pmd.SetMemoryProtection(ProcessExtensions.MemProtection.Memory_ExecuteReadWrite))
                                             count++;
                                     }
                                 }

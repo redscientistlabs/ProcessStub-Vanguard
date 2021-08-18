@@ -23,14 +23,14 @@ namespace ProcessStub
         private void MemoryProtectionSelector_Load(object sender, EventArgs e)
         {
             tablePanel.Controls.Clear();
-            foreach (var t in Enum.GetNames(typeof(ProcessExtensions.MemoryProtection)).Where(x => x != ProcessExtensions.MemoryProtection.NoAccess.ToString() && x != ProcessExtensions.MemoryProtection.ZeroAccess.ToString() && x != ProcessExtensions.MemoryProtection.Empty.ToString()))
+            foreach (var t in Enum.GetNames(typeof(ProcessExtensions.MemProtection)).Where(x => x != ProcessExtensions.MemProtection.Memory_NoAccess.ToString() && x != ProcessExtensions.MemProtection.Memory_ZeroAccess.ToString() && x != ProcessExtensions.MemProtection.Memory_Empty.ToString()))
             {
                 CheckBox cb = new CheckBox
                 {
                     AutoSize = true,
                     Text = t,
                     Name = t,
-                    Checked = (ProcessWatch.ProtectMode & (ProcessExtensions.MemoryProtection)Enum.Parse(typeof(ProcessExtensions.MemoryProtection), t)) >= (ProcessExtensions.MemoryProtection)Enum.Parse(typeof(ProcessExtensions.MemoryProtection), t)
+                    Checked = (ProcessWatch.ProtectMode & (ProcessExtensions.MemProtection)Enum.Parse(typeof(ProcessExtensions.MemProtection), t)) >= (ProcessExtensions.MemProtection)Enum.Parse(typeof(ProcessExtensions.MemProtection), t)
                 };
                 tablePanel.Controls.Add(cb);
             }
@@ -46,9 +46,9 @@ namespace ProcessStub
                 return;
             }
 
-            ProcessExtensions.MemoryProtection a = ProcessExtensions.MemoryProtection.ZeroAccess;
+            ProcessExtensions.MemProtection a = ProcessExtensions.MemProtection.Memory_ZeroAccess;
             foreach (CheckBox cb in tablePanel.Controls.Cast<CheckBox>().Where(item => item.Checked))
-                a = a | (ProcessExtensions.MemoryProtection)Enum.Parse(typeof(ProcessExtensions.MemoryProtection), cb.Text);
+                a = a | (ProcessExtensions.MemProtection)Enum.Parse(typeof(ProcessExtensions.MemProtection), cb.Text);
 
             ProcessWatch.ProtectMode = a;
             Params.SetParam("PROTECTIONMODE", ((uint)a).ToString());

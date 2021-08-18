@@ -5,7 +5,7 @@ namespace RTCV.ProcessCorrupt
     using System.IO;
     using System.Windows.Forms;
     using RTCV.CorruptCore;
-
+    
     [Serializable()]
     public class ProcessMemoryDomain : IMemoryDomain
     {
@@ -14,7 +14,7 @@ namespace RTCV.ProcessCorrupt
         public long Size { get; }
         private IntPtr baseAddr { get; }
         public int WordSize => 4;
-        private ProcessExtensions.MemoryProtection mp = ProcessExtensions.MemoryProtection.Empty;
+        private ProcessExtensions.MemProtection mp = ProcessExtensions.MemProtection.Memory_Empty;
         private Process p;
 
         private int errCount = 0;
@@ -101,7 +101,7 @@ namespace RTCV.ProcessCorrupt
             throw new NotImplementedException();
         }
 
-        public bool SetMemoryProtection(ProcessExtensions.MemoryProtection memoryProtection)
+        public bool SetMemoryProtection(ProcessExtensions.MemProtection memoryProtection)
         {
             var result = ProcessExtensions.VirtualProtectEx(p, baseAddr, (IntPtr)Size, memoryProtection, out var _mp);
             if (result)
@@ -110,9 +110,18 @@ namespace RTCV.ProcessCorrupt
         }
         public bool ResetMemoryProtection()
         {
-            if (mp != ProcessExtensions.MemoryProtection.Empty)
-                return ProcessExtensions.VirtualProtectEx(p, baseAddr, (IntPtr)Size, mp, out _);
-            return false;
+            var memoryProtection = mp;
+            var empty = ProcessExtensions.MemProtection.Memory_Empty;
+            IntPtr size = (IntPtr)Size;
+
+
+            bool memoryProtectionNotEmpty = memoryProtection != empty;
+            ProcessExtensions.MemProtection ThrowOff;
+
+            if (memoryProtectionNotEmpty)
+                return ProcessExtensions.VirtualProtectEx(p, baseAddr, size, mp, out ThrowOff);
+            else
+                return false;
         }
 
         public void FlushInstructionCache()
