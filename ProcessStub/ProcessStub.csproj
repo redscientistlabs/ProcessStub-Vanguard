@@ -62,9 +62,7 @@
       <DependentUpon>HookProcessForm.cs</DependentUpon>
     </Compile>
     <Compile Include="ProcessWatch.cs" />
-    <Compile Include="MemoryProtectionSelector.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="MemoryProtectionSelector.cs" />
     <Compile Include="MemoryProtectionSelector.Designer.cs">
       <DependentUpon>MemoryProtectionSelector.cs</DependentUpon>
     </Compile>
