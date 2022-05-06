@@ -1,4 +1,4 @@
-﻿namespace ProcessStub
+namespace ProcessStub
 {
     partial class ProgressForm
     {
@@ -17,6 +17,7 @@
             {
                 components.Dispose();
             }
+            bw.Dispose();
             base.Dispose(disposing);
         }
 

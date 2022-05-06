@@ -22,9 +22,7 @@ namespace RTCV.ProcessCorrupt
             MEMORY_TOP_DOWN = 0x00100000,
             MEMORY_RESET_UNDO = 0x1000000,
             MEMORY_LARGE_PAGES = 0x20000000,
-
         }
-
 
         [StructLayout(LayoutKind.Sequential)]
         public struct MemoryBasicInformation
@@ -44,7 +42,6 @@ namespace RTCV.ProcessCorrupt
             public readonly uint Type;
             public readonly uint __alignment2;
         }
-
 
         [Flags]
         public enum MemProtection
@@ -105,9 +102,6 @@ namespace RTCV.ProcessCorrupt
             public ushort processorRevision;
         }
 
-
-
-
         #region DllImports
 
         [DllImport("kernel32.dll")]
@@ -156,21 +150,7 @@ namespace RTCV.ProcessCorrupt
         [DllImport("kernel32.dll")]
         public static extern void GetSystemInfo(out SYSTEM_INFO lpSystemInfo);
 
-
         #endregion
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         public static bool VirtualQueryEx(Process p, IntPtr baseAddress, out MemoryBasicInformation memoryBasicInformation)
         {
@@ -191,7 +171,6 @@ namespace RTCV.ProcessCorrupt
             {
                 //throw new Exception($"Failed to read from a region of virtual memory in the remote process. Error code: {Marshal.GetLastWin32Error()}");
             }
-
 
             return bytesBuffer;
         }
@@ -222,7 +201,6 @@ namespace RTCV.ProcessCorrupt
 
             return true;
         }
-
 
         private static string GetMainModuleFileName(this Process process, int buffer = 1024)
         {
@@ -261,7 +239,6 @@ namespace RTCV.ProcessCorrupt
             GetMappedFileNameW(hProcess, hModule, fileName, fileName.Capacity);
             return fileName.ToString();
         }
-
 
         public static Process GetProcessSafe(Process process)
         {
@@ -325,7 +302,5 @@ namespace RTCV.ProcessCorrupt
             }
             return success;
         }
-
-
     }
 }

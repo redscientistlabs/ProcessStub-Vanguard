@@ -15,6 +15,8 @@
     <TargetFrameworkProfile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+	<DocumentationFile>$(OutputPath)$(AssemblyName).xml</DocumentationFile>
+    <NoWarn>$(NoWarn),1573,1591,1712</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
@@ -62,7 +64,9 @@
       <DependentUpon>HookProcessForm.cs</DependentUpon>
     </Compile>
     <Compile Include="ProcessWatch.cs" />
-    <Compile Include="MemoryProtectionSelector.cs" />
+    <Compile Include="MemoryProtectionSelector.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="MemoryProtectionSelector.Designer.cs">
       <DependentUpon>MemoryProtectionSelector.cs</DependentUpon>
     </Compile>

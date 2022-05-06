@@ -5,7 +5,7 @@ namespace RTCV.ProcessCorrupt
     using System.IO;
     using System.Windows.Forms;
     using RTCV.CorruptCore;
-    
+
     [Serializable()]
     public class ProcessMemoryDomain : IMemoryDomain
     {
@@ -15,6 +15,8 @@ namespace RTCV.ProcessCorrupt
         private IntPtr baseAddr { get; }
         public int WordSize => 4;
         private ProcessExtensions.MemProtection mp = ProcessExtensions.MemProtection.Memory_Empty;
+
+        [NonSerialized]
         private Process p;
 
         private int errCount = 0;
@@ -113,7 +115,6 @@ namespace RTCV.ProcessCorrupt
             var memoryProtection = mp;
             var empty = ProcessExtensions.MemProtection.Memory_Empty;
             IntPtr size = (IntPtr)Size;
-
 
             bool memoryProtectionNotEmpty = memoryProtection != empty;
             ProcessExtensions.MemProtection ThrowOff;
