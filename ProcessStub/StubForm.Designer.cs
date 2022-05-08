@@ -70,7 +70,7 @@
             this.pnTarget.Controls.Add(this.lbTarget);
             this.pnTarget.Location = new System.Drawing.Point(129, 49);
             this.pnTarget.Name = "pnTarget";
-            this.pnTarget.Size = new System.Drawing.Size(359, 122);
+            this.pnTarget.Size = new System.Drawing.Size(359, 130);
             this.pnTarget.TabIndex = 13;
             this.pnTarget.Tag = "color:dark1";
             // 
@@ -81,10 +81,10 @@
             this.btnUnloadTarget.FlatAppearance.BorderSize = 0;
             this.btnUnloadTarget.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnUnloadTarget.Font = new System.Drawing.Font("Segoe UI", 8F);
-            this.btnUnloadTarget.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            this.btnUnloadTarget.Location = new System.Drawing.Point(263, 12);
+            this.btnUnloadTarget.ForeColor = System.Drawing.Color.White;
+            this.btnUnloadTarget.Location = new System.Drawing.Point(259, 11);
             this.btnUnloadTarget.Name = "btnUnloadTarget";
-            this.btnUnloadTarget.Size = new System.Drawing.Size(84, 23);
+            this.btnUnloadTarget.Size = new System.Drawing.Size(88, 29);
             this.btnUnloadTarget.TabIndex = 42;
             this.btnUnloadTarget.TabStop = false;
             this.btnUnloadTarget.Tag = "color:dark2";
@@ -99,10 +99,10 @@
             this.btnBrowseTarget.FlatAppearance.BorderSize = 0;
             this.btnBrowseTarget.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnBrowseTarget.Font = new System.Drawing.Font("Segoe UI", 8F);
-            this.btnBrowseTarget.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.btnBrowseTarget.ForeColor = System.Drawing.Color.White;
             this.btnBrowseTarget.Location = new System.Drawing.Point(12, 12);
             this.btnBrowseTarget.Name = "btnBrowseTarget";
-            this.btnBrowseTarget.Size = new System.Drawing.Size(72, 23);
+            this.btnBrowseTarget.Size = new System.Drawing.Size(90, 28);
             this.btnBrowseTarget.TabIndex = 35;
             this.btnBrowseTarget.TabStop = false;
             this.btnBrowseTarget.Tag = "color:dark2";
@@ -117,7 +117,7 @@
             this.lbTarget.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(31)))), ((int)(((byte)(32)))));
             this.lbTarget.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.lbTarget.ForeColor = System.Drawing.Color.PaleGoldenrod;
-            this.lbTarget.Location = new System.Drawing.Point(12, 39);
+            this.lbTarget.Location = new System.Drawing.Point(12, 49);
             this.lbTarget.Name = "lbTarget";
             this.lbTarget.Padding = new System.Windows.Forms.Padding(3, 6, 1, 1);
             this.lbTarget.Size = new System.Drawing.Size(335, 72);
@@ -240,7 +240,7 @@
             this.btnRefreshDomains.FlatAppearance.BorderSize = 0;
             this.btnRefreshDomains.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnRefreshDomains.Font = new System.Drawing.Font("Segoe UI", 8F);
-            this.btnRefreshDomains.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.btnRefreshDomains.ForeColor = System.Drawing.Color.White;
             this.btnRefreshDomains.Location = new System.Drawing.Point(373, 229);
             this.btnRefreshDomains.Name = "btnRefreshDomains";
             this.btnRefreshDomains.Size = new System.Drawing.Size(103, 23);
@@ -300,7 +300,7 @@
             this.MinimumSize = new System.Drawing.Size(516, 300);
             this.Name = "StubForm";
             this.Tag = "color:dark2";
-            this.Text = "Process Stub";
+            this.Text = "ProcessStub";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.StubForm_FormClosing);
             this.Load += new System.EventHandler(this.StubForm_Load);
             this.pnTarget.ResumeLayout(false);
