@@ -180,12 +180,12 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
                 if (p?.HasExited == false)
                     return;
                 SyncObjectSingleton.FormExecute(() => S.GET<StubForm>().lbTargetStatus.Text = "Waiting...");
-                var procToFind = S.GET<StubForm>().tbAutoAttach.Text;
+                var procToFind = S.GET<StubForm>().tbAutoAttach.Text.ToUpper().Trim();
                 if (string.IsNullOrWhiteSpace(procToFind))
                     return;
 
                 SyncObjectSingleton.FormExecute(() => S.GET<StubForm>().lbTargetStatus.Text = "Hooking...");
-                var _p = Process.GetProcesses().First(x => x.ProcessName == procToFind);
+                var _p = Process.GetProcesses().First(x => x.ProcessName.ToUpper().Contains(procToFind));
                 if (_p != null)
                 {
                     Thread.Sleep(2000); //Give the process 2 seconds

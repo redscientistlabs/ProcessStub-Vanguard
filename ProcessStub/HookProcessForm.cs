@@ -117,15 +117,14 @@ namespace ProcessStub
 
         private void btnFind_Click(object sender, EventArgs e)
         {
-            var search = tbSearch.Text;
+            var search = tbSearch.Text.ToUpper().Trim();
 
             int position = -1;
-
             var processes = lvProcesses.Items.Cast<ListViewItem>().Select(it => (Process)it.Tag).ToList();
             for (int i = 0;i < processes.Count; i++)
             {
                 var p = processes[i];
-                if (p.ProcessName.Contains(search))
+                if (p.ProcessName.ToUpper().Contains(search))
                 {
                     position = i;
                     break;
