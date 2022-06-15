@@ -16,7 +16,7 @@ namespace ProcessStub
 
     public static class ProcessWatch
     {
-        public static string ProcessStubVersion = "0.1.5";
+        public static string ProcessStubVersion = "0.1.6";
         public static string currentDir = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
         public static Process p;
         public static bool UseFiltering = true;
@@ -168,6 +168,11 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
             AutoCorruptTimer.Start();
         }
 
+        internal static bool HuntTarget(string currentTarget)
+        {
+            throw new NotImplementedException();
+        }
+
         private static void AutoHookTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             try
@@ -271,6 +276,7 @@ By clicking 'Yes' you agree that you have read this warning in full and are awar
                     }
 
                     S.GET<StubForm>().lbTarget.Text = p.ProcessName;
+                    S.GET<StubForm>().tbAutoAttach.Text = p.ProcessName;
                     S.GET<StubForm>().lbTargetStatus.Text = "Hooked!";
 
                     //Refresh the UI

@@ -114,5 +114,40 @@ namespace ProcessStub
             DialogResult = DialogResult.OK;
             Close();
         }
+
+        private void btnFind_Click(object sender, EventArgs e)
+        {
+            var search = tbSearch.Text;
+
+            int position = -1;
+
+            var processes = lvProcesses.Items.Cast<ListViewItem>().Select(it => (Process)it.Tag).ToList();
+            for (int i = 0;i < processes.Count; i++)
+            {
+                var p = processes[i];
+                if (p.ProcessName.Contains(search))
+                {
+                    position = i;
+                    break;
+                }
+            }
+
+            if (position != -1)
+            {
+                for (int i = 0; i < processes.Count; i++)
+                {
+                    if (i == position)
+                    {
+                        lvProcesses.Items[i].Selected = true;
+                    }
+                    else
+                    {
+                        lvProcesses.Items[i].Selected = false;
+                    }
+                }
+                lvProcesses.Select();
+                lvProcesses.EnsureVisible(position);
+            }
+        }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace ProcessStub
+namespace ProcessStub
 {
     partial class StubForm
     {
@@ -45,6 +45,7 @@
             this.btnRefreshDomains = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.tbAutoAttach = new System.Windows.Forms.TextBox();
+            this.btnRehook = new System.Windows.Forms.Button();
             this.pnTarget.SuspendLayout();
             this.pnSideBar.SuspendLayout();
             this.SuspendLayout();
@@ -65,6 +66,7 @@
             this.pnTarget.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pnTarget.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.pnTarget.Controls.Add(this.btnRehook);
             this.pnTarget.Controls.Add(this.btnUnloadTarget);
             this.pnTarget.Controls.Add(this.btnBrowseTarget);
             this.pnTarget.Controls.Add(this.lbTarget);
@@ -215,7 +217,7 @@
             this.tbFilterText.Multiline = true;
             this.tbFilterText.Name = "tbFilterText";
             this.tbFilterText.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.tbFilterText.Size = new System.Drawing.Size(257, 34);
+            this.tbFilterText.Size = new System.Drawing.Size(190, 34);
             this.tbFilterText.TabIndex = 175;
             this.tbFilterText.Tag = "color:dark2";
             this.tbFilterText.Text = ".exe\r\n.dll";
@@ -241,13 +243,13 @@
             this.btnRefreshDomains.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnRefreshDomains.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.btnRefreshDomains.ForeColor = System.Drawing.Color.White;
-            this.btnRefreshDomains.Location = new System.Drawing.Point(373, 229);
+            this.btnRefreshDomains.Location = new System.Drawing.Point(415, 191);
             this.btnRefreshDomains.Name = "btnRefreshDomains";
-            this.btnRefreshDomains.Size = new System.Drawing.Size(103, 23);
+            this.btnRefreshDomains.Size = new System.Drawing.Size(73, 61);
             this.btnRefreshDomains.TabIndex = 43;
             this.btnRefreshDomains.TabStop = false;
             this.btnRefreshDomains.Tag = "color:dark2";
-            this.btnRefreshDomains.Text = "Refresh Domains";
+            this.btnRefreshDomains.Text = "Refresh Target Domains";
             this.btnRefreshDomains.UseVisualStyleBackColor = false;
             this.btnRefreshDomains.Visible = false;
             this.btnRefreshDomains.Click += new System.EventHandler(this.BtnRefreshDomains_Click);
@@ -261,24 +263,43 @@
             this.label3.ForeColor = System.Drawing.Color.White;
             this.label3.Location = new System.Drawing.Point(138, 236);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(68, 13);
+            this.label3.Size = new System.Drawing.Size(93, 13);
             this.label3.TabIndex = 178;
-            this.label3.Text = "Auto-attach";
+            this.label3.Text = "Re-hook process";
             // 
             // tbAutoAttach
             // 
             this.tbAutoAttach.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbAutoAttach.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(31)))), ((int)(((byte)(32)))));
-            this.tbAutoAttach.Enabled = false;
+            this.tbAutoAttach.Enabled = true;
             this.tbAutoAttach.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.tbAutoAttach.ForeColor = System.Drawing.Color.White;
-            this.tbAutoAttach.Location = new System.Drawing.Point(219, 231);
+            this.tbAutoAttach.Location = new System.Drawing.Point(237, 231);
             this.tbAutoAttach.Multiline = true;
             this.tbAutoAttach.Name = "tbAutoAttach";
-            this.tbAutoAttach.Size = new System.Drawing.Size(148, 21);
+            this.tbAutoAttach.Size = new System.Drawing.Size(172, 21);
             this.tbAutoAttach.TabIndex = 177;
             this.tbAutoAttach.Tag = "color:dark2";
+            // 
+            // btnRehook
+            // 
+            this.btnRehook.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnRehook.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
+            this.btnRehook.FlatAppearance.BorderSize = 0;
+            this.btnRehook.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnRehook.Font = new System.Drawing.Font("Segoe UI", 8F);
+            this.btnRehook.ForeColor = System.Drawing.Color.White;
+            this.btnRehook.Location = new System.Drawing.Point(165, 12);
+            this.btnRehook.Name = "btnRehook";
+            this.btnRehook.Size = new System.Drawing.Size(88, 29);
+            this.btnRehook.TabIndex = 43;
+            this.btnRehook.TabStop = false;
+            this.btnRehook.Tag = "color:dark2";
+            this.btnRehook.Text = "Re-hook";
+            this.btnRehook.UseVisualStyleBackColor = false;
+            this.btnRehook.Visible = false;
+            this.btnRehook.Click += new System.EventHandler(this.btnRehook_Click);
             // 
             // StubForm
             // 
@@ -328,6 +349,7 @@
         private System.Windows.Forms.Label label3;
         public System.Windows.Forms.TextBox tbAutoAttach;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Button btnRehook;
     }
 }
 

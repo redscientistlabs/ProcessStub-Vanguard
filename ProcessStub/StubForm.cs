@@ -1,12 +1,16 @@
 namespace ProcessStub
 {
     using System;
+    using System.Diagnostics;
+    using System.Collections.Generic;
     using System.Drawing;
     using System.Windows.Forms;
+    using System.Linq;
     using RTCV.Common;
     using RTCV.NetCore;
     using RTCV.UI;
     using Vanguard;
+    using System.Threading;
 
     public partial class StubForm : Form
     {
@@ -58,6 +62,7 @@ namespace ProcessStub
             originalLbTargetSize = lbTarget.Size;
             lbTarget.Size = new Size(lbTarget.Size.Width + diff, lbTarget.Size.Height);
             btnUnloadTarget.Visible = true;
+            btnRehook.Visible = true;
             btnRefreshDomains.Visible = true;
 
             ProcessWatch.EnableInterface();
@@ -66,6 +71,8 @@ namespace ProcessStub
         public void DisableTargetInterface()
         {
             btnUnloadTarget.Visible = false;
+            btnRehook.Visible = false;
+
             btnRefreshDomains.Visible = false;
             btnBrowseTarget.Visible = true;
 
@@ -110,10 +117,9 @@ namespace ProcessStub
 
                 ContextMenuStrip columnsMenu = new ContextMenuStrip();
 
-                ((ToolStripMenuItem)columnsMenu.Items.Add("Use AutoHook", null, (ob, ev) =>
+                ((ToolStripMenuItem)columnsMenu.Items.Add("Enable Auto Re-Hook", null, (ob, ev) =>
                 {
                     ProcessWatch.AutoHookTimer.Enabled = !ProcessWatch.AutoHookTimer.Enabled;
-                    tbAutoAttach.Enabled = ProcessWatch.AutoHookTimer.Enabled;
                 })).Checked = ProcessWatch.AutoHookTimer.Enabled;
 
                 ((ToolStripMenuItem)columnsMenu.Items.Add("Use Filtering", null, (ob, ev) =>
@@ -160,6 +166,34 @@ namespace ProcessStub
         {
             if (VanguardCore.vanguardConnected)
                 ProcessWatch.UpdateDomains();
+        }
+
+        private void btnRehook_Click(object sender, EventArgs e)
+        {
+            string currentTarget = S.GET<StubForm>().tbAutoAttach.Text;
+
+            try
+            {
+            ProcessWatch.CloseTarget();
+
+            Thread.Sleep(2000); //Give the process 2 seconds
+
+            var inProcesses = Process.GetProcesses();
+            var listProcesses = new List<Process>(inProcesses);
+            Process p = listProcesses.FirstOrDefault(it => it.ProcessName == currentTarget);
+
+            //fetch new process here
+
+            if (p == null)
+                return;
+
+            //re-hook
+            ProcessWatch.LoadTarget(p);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to Re-hook process {currentTarget}\n\n{ex}");
+            }
         }
     }
 }
