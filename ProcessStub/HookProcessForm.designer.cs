@@ -171,9 +171,8 @@ namespace ProcessStub
             this.tbSearch.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.tbSearch.ForeColor = System.Drawing.Color.White;
             this.tbSearch.Location = new System.Drawing.Point(12, 25);
-            this.tbSearch.Multiline = true;
             this.tbSearch.Name = "tbSearch";
-            this.tbSearch.Size = new System.Drawing.Size(360, 21);
+            this.tbSearch.Size = new System.Drawing.Size(360, 22);
             this.tbSearch.TabIndex = 178;
             this.tbSearch.Tag = "color:dark2";
             // 
