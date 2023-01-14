@@ -141,11 +141,14 @@ namespace ProcessStub
 
                 })).Checked = ProcessWatch.UseExceptionHandler;
                 */
-                ((ToolStripMenuItem)columnsMenu.Items.Add("Use Blacklist", null, (ob, ev) =>
-                {
-                    ProcessWatch.UseBlacklist = !ProcessWatch.UseBlacklist;
-                    Params.SetParam("USEBLACKLIST", ProcessWatch.UseBlacklist.ToString());
-                })).Checked = ProcessWatch.UseBlacklist;
+
+                //WE DON'T LET THE USER DISABLE THE BLACKLIST FROM THE APP ANYMORE
+                //((ToolStripMenuItem)columnsMenu.Items.Add("Use Blacklist", null, (ob, ev) =>
+                //{
+                //    ProcessWatch.UseBlacklist = !ProcessWatch.UseBlacklist;
+                //    Params.SetParam("USEBLACKLIST", ProcessWatch.UseBlacklist.ToString());
+                //})).Checked = ProcessWatch.UseBlacklist;
+
                 ((ToolStripMenuItem)columnsMenu.Items.Add("Suspend Process on Corrupt", null, (ob, ev) =>
                 {
                     ProcessWatch.SuspendProcess = !ProcessWatch.SuspendProcess;
